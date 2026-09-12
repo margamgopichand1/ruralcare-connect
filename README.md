@@ -1,106 +1,67 @@
-# 🩺 RuralCare Connect — "Bringing the Doctor to the Doorstep"
+# 🩺 RuralCare Connect — "Right Care. Right Place. Right Time."
 
-**Smart India Hackathon 2026 | Problem Statement: SIH26133**  
-**Organization:** Government of Maharashtra  
-**Theme:** MedTech / BioTech / HealthTech  
-
----
-
-## 📌 Executive Summary & Project Objective
-
-Rural and tribal communities across Maharashtra face severe healthcare delivery hurdles: geographic distance to Primary Health Centres (PHCs) and District Hospitals, lack of motorized transport, shortage of doctors, fragmented paper records, and delayed ambulance response.
-
-**RuralCare Connect** is a digital public-health platform designed to bring medical care directly to the doorstep of rural patients. It introduces an on-demand ride-hailing dispatch model for certified doctors, unified longitudinal digital health records (ABHA-compatible), real-time 108 emergency escalation, and a district-level monitoring command center for public health administrators.
-
-> [!NOTE]
-> **Prototype Note:** Current version uses simulated/local services for demonstration. Production deployment can integrate government MIS, Firebase, PostgreSQL/PostGIS, and India's existing 108 emergency ambulance infrastructure.
+**Smart India Hackathon 2026 | Problem Statement ID: SIH26133**  
+**Theme:** MedTech / BioTech / HealthTech | **Target Entity:** Public Health & Family Welfare Department, Government of Maharashtra  
+**Focal Geography:** Karegaon PHC, Shirur Taluka, Pune District, Maharashtra  
 
 ---
 
-## 🌟 Key Features
+## 📌 Executive Summary & Vision
 
-### 1. 🚖 On-Demand Ride-Hailing Doctor Dispatch
-- Multi-step booking flow tailored for rural users:
-  - Symptom selection (Fever, Cough, Stomach, Skin, Child health, Women's health, Elderly care)
-  - Urgency categorization (Routine, Soon, Urgent, Emergency)
-  - Interactive OpenStreetMap GPS village locator
-  - Multi-factor matching algorithm: **Haversine Distance + Specialty Match + Doctor Rating + Continuity of Care**
-- Real-time animated radar search and automated acceptance simulation.
+Rural and underserved communities face acute challenges: long travel distances to hospitals, critical shortages of specialists, irregular diagnostic coverage, fragmented paper medical records, delayed referrals, medicine stock-outs, long waiting times, limited service awareness, poor connectivity, and language barriers.
 
-### 2. 🗺️ Real-Time Doctor Route Tracking
-- OpenStreetMap and Leaflet integration with zero paid API keys.
-- Live moving doctor marker, polyline path, ETA countdown, and distance decay.
-- Direct contact simulations: Call Doctor and In-App SMS messaging.
-
-### 3. 🚨 108 Emergency SOS Pipeline
-- Always-available high-contrast SOS trigger across all screens.
-- Captures GPS coordinates, matches nearest available 108 ambulance (e.g. `MH-12-RN-4421`), dispatches driver details, and alerts the nearest hospital trauma bay.
-- Real-time SMS dispatch simulation to the patient's family emergency contact.
-- Statutory disclaimer: *"ETA is the fastest available estimate and depends on ambulance availability and rural road conditions."*
-
-### 4. 📋 Unified Digital Health Record (ABHA Compatible)
-- Longitudinal clinical timeline that travels with the patient across Sub-Centers, PHCs, CHCs, and District Hospitals.
-- Chronological logs of consultations, vitals, prescriptions, and specialist referrals.
-
-### 5. 💊 Real-Time Medicine Stock Inventory
-- Searchable essential drug catalog (Paracetamol 500mg, Amoxicillin, ORS, Metformin, Cetirizine, Amlodipine).
-- Live stock indicators (*In Stock*, *Low Stock*, *Out of Stock*) across nearby PHCs with direct call shortcuts.
-
-### 6. 🏛️ District Healthcare Command Center (Govt of Maharashtra)
-- Real-time district health KPIs: Total Patients, Active Doctors, Visits Today, Emergency Cases, Average Response Time, Pending Referrals.
-- Interactive GIS map showing PHCs, hospitals, active doctors, coverage red zones, and emergency incidents.
-- Epidemiological outbreak surveillance heatmap (Viral Pyrexia clusters, Gastroenteritis, Dengue).
-- Doctor utilization rate and hourly request volume curves.
-
-### 7. 📶 Offline-First Resilience & Auto-Sync
-- Built-in network simulator toggle (Online 🟢 / Offline 🟠).
-- Queues visit requests and clinical drafts locally when connectivity drops.
-- Automatically synchronizes queued data when the network is restored.
-
-### 8. 🌐 Multilingual & Voice Accessibility
-- Dynamic 4-language support:
-  - **English**
-  - **मराठी (Marathi)**
-  - **हिन्दी (Hindi)**
-  - **తెలుగు (Telugu)**
-- Voice symptom input powered by Web Speech API with prototype simulation fallback.
-- Low-tech accessibility page covering SMS request syntax (`CARE FEVER SHIRUR` to 56161), toll-free IVR (1800-RURAL-CARE), and local ASHA worker directory.
-
-### 9. ⚖️ Hackathon Presentation / Judge Demo Mode
-- Floating presentation bar with 1-click guided walkthroughs for all SIH evaluation rubrics:
-  - `▶ Patient Journey`: Booking -> Matching -> Tracking -> Consultation -> Prescription -> ABHA Record
-  - `▶ Doctor Journey`: Incoming Request -> Accept -> Clinical Vitals -> Rx Formulation
-  - `▶ Emergency 108 SOS`: Immediate 108 Ambulance escalation & hospital alert
-  - `▶ Government Command Center`: District GIS telemetry & epidemiological charts
-  - `▶ Offline Mode`: Offline queue and automatic reconnection sync
-  - `▶ Multilingual`: Instant language toggle across all labels
+**RuralCare Connect** is an integrated healthcare-access and quality-support platform built to **strengthen and augment India's existing 3-tier public healthcare delivery system** (Sub-Centres → PHCs → CHCs/Sub-District Hospitals → District Hospitals) rather than attempting to bypass or replace it.
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+## 🌟 The 6 Core Innovations
 
-| Layer | Technology |
-|---|---|
-| **Frontend Framework** | React 18 with TypeScript |
-| **Bundler & Dev Server** | Vite 5 |
-| **Styling & Design System** | Tailwind CSS with custom public health palette |
-| **Icons** | Lucide React |
-| **Geospatial Mapping** | Leaflet + OpenStreetMap (Zero paid API keys required) |
-| **Data & Persistence** | LocalStorage + Mock REST Service Layer |
-| **Speech Recognition** | Web Speech API (`webkitSpeechRecognition`) + Voice Demo Fallback |
-| **Export & Print** | Native CSS print stylesheets + Plaintext/PDF file blob generator |
+```mermaid
+flowchart TD
+    subgraph Core["RuralCare Connect Platform"]
+        Q["1. Dynamic Clinical Priority Queue"]
+        P["2. Hospital Pre-Arrival Emergency Alert"]
+        T["3. Assistive Multilingual AI Triage"]
+        O["4. Offline-First Local Sync Engine"]
+        R["5. 7-Stage Closed-Loop Referral Tracker"]
+        M["6. Multi-Tier Medicine & Diagnostics Grid"]
+    end
+```
+
+1. **Dynamic Clinical Priority Queue:** Clinician-governed queue reordering (`Critical > Urgent > Priority > Routine`). Emergency triage upgrades instantly bump critical patients to Token #1.
+2. **Pre-Arrival Hospital Emergency Alert:** Real-time bi-directional telemetry between 108 ALS ambulances and receiving hospital emergency rooms. Doctors receive incoming patient vitals, ECG, and tentative diagnosis before the wheels touch the hospital bay.
+3. **Assistive Multilingual AI Triage:** Structured symptom assessment with voice simulation in English, Marathi, Hindi, and Telugu. Strictly operates as clinical decision support with mandatory qualified doctor validation.
+4. **Offline-First Local Sync Engine:** Frontline ASHAs and ANMs in connectivity-shadowed hamlets can register citizens and record vitals locally; records sync seamlessly upon reconnection.
+5. **7-Stage Closed-Loop Referral Tracking:** Tracks patients across inter-tier transfers (`Created → Accepted → Scheduled → Patient En Route → Arrived → Consulted → Completed`), preventing patient drop-offs.
+6. **Multi-Tier Medicine & Diagnostics Grid:** Real-time stock visibility across Sub-Centres, PHCs, CHCs, and District Hospitals, paired with digital diagnostic slot scheduling and automated report generation.
 
 ---
 
-## 👥 Demo Accounts (1-Click Login Supported)
+## 👥 6 Dedicated Stakeholder Personas (1-Click Demo Login)
 
-| Stakeholder Role | Email | Password | Persona & Focus |
+| Role | Demo Persona | Facility / Scope | Primary Operational Responsibilities |
 |---|---|---|---|
-| **Patient** | `patient@ruralcare.demo` | `patient123` | Ramesh Patil (Karegaon, Shirur) — Book visits, records, SOS |
-| **Doctor** | `doctor@ruralcare.demo` | `doctor123` | Dr. Priya Sharma (MBBS, MD) — Accept requests, vitals, Rx |
-| **Govt Admin** | `admin@ruralcare.demo` | `admin123` | District Health Officer (Pune) — GIS map, outbreak surveillance |
+| **Patient / Citizen** | Ramesh Patil (Age 48) | Karegaon Village | Voice/AI Triage, Doorstep Visit, OPD Queue Token, Digital Rx, 108 Emergency SOS |
+| **Frontline Health Worker** | Lakshmi Devi (ASHA) | Sub-Centre Karegaon | Offline Registration, Doorstep Vitals, Maternal/NCD High-Risk Monitoring |
+| **Medical Officer / Doctor** | Dr. Priya Sharma (MBBS, DNB) | Karegaon PHC | Priority Queue Management, Urgency Escalation, Digital Rx Builder, Specialist Referrals |
+| **108 Ambulance Driver** | Rajesh Driver (ALS Unit 14) | Shirur Taluka EMS | Capability Hospital Matching, GPS Navigation, Pre-Arrival Triage Broadcast |
+| **Hospital Admin / MS** | Dr. Sunita Kulkarni | Shirur Sub-District Hospital | Pre-Arrival Alert Command, Emergency Bed Allocation, Specialist Rosters |
+| **District Health Admin** | Dr. Vilas Rao (DHO) | Pune District Health Office | Taluka Heatmaps, Maternal Mortality Trackers, Stock Deficits, Real-Time Audit Log |
 
-*Note: You can switch roles at any time using the role pill in the top navigation bar or the Judge Demo Bar.*
+---
+
+## ⚖️ SIH Judge Presentation Mode & Evaluation Tools
+
+Anchored permanently in the **Judge Demo Bar** (bottom right of every screen) are direct interactive tools designed specifically for hackathon evaluators:
+
+1. **🎯 19-Stage Interactive "Rural Patient Emergency Journey" (`JudgeScenarioModal`):**
+   Step through a realistic acute cardiac case from symptom onset in Karegaon village, ASHA doorstep check, 108 dispatch, pre-arrival hospital prep, specialist consultation, diagnostic ECG, priority queue escalation, and post-discharge home care.
+2. **💡 "Why RuralCare?" Innovation Matrix (`InnovationsModal`):**
+   Detailed deep-dive into the 6 core innovations and 5 architectural pillars.
+3. **📋 SIH Problem Statement Alignment Matrix (`SihAlignmentModal`):**
+   Comprehensive 10-point mapping proving exact alignment with problem statement SIH26133.
+4. **🏗️ 7-Tier Technical Architecture Diagram (`TechArchitectureModal`):**
+   Full architectural layout from edge offline caching to national ABDM & 108 CAD integration.
 
 ---
 
@@ -110,93 +71,50 @@ Rural and tribal communities across Maharashtra face severe healthcare delivery 
 - Node.js (v18+ or v20+)
 - npm (v9+ or v10+)
 
-### Setup & Launch
+### Commands
 ```bash
-# 1. Clone or navigate to the project directory
+# 1. Navigate to the project directory
 cd C:\Users\akshu\.gemini\antigravity\scratch\ruralcare-connect
 
-# 2. Install dependencies (if not already installed)
-npm install
-
-# 3. Start local development server
+# 2. Start local development server
 npm run dev
 
-# 4. Open browser
-# Navigate to http://localhost:5173
-```
+# 3. Access in your browser
+http://127.0.0.1:5173/
 
-### Production Build
-```bash
+# 4. Production Build Verification
 npm run build
-npm run preview
 ```
 
 ---
 
-## 📂 Project Structure
+## 📁 Repository Structure
 
 ```
 ruralcare-connect/
 ├── public/
 ├── src/
-│   ├── assets/              # Icons, banners, graphics
+│   ├── assets/              # Branding and icons
 │   ├── components/
-│   │   ├── admin/           # Government District Healthcare Command Center
-│   │   │   └── GovernmentDashboard.tsx
-│   │   ├── auth/            # Role Selection & 1-Click Demo Login Modal
-│   │   │   └── RoleSelectModal.tsx
-│   │   ├── common/          # Reusable LeafletMap, Navbar, Footer, LanguageSelector
-│   │   │   ├── Footer.tsx
-│   │   │   ├── LanguageSelector.tsx
-│   │   │   ├── LeafletMap.tsx
-│   │   │   ├── Navbar.tsx
-│   │   │   ├── NotificationBell.tsx
-│   │   │   └── OfflineBanner.tsx
-│   │   ├── doctor/          # Doctor console, MMC verification, consultation workflow
-│   │   │   ├── DoctorDashboard.tsx
-│   │   │   ├── DoctorProfileModal.tsx
-│   │   │   ├── DoctorVerificationModal.tsx
-│   │   │   └── VisitWorkflowModal.tsx
-│   │   ├── emergency/       # 108 Emergency SOS modal & telemetry
-│   │   │   └── EmergencySosModal.tsx
-│   │   ├── judge/           # SIH Hackathon presentation bar
-│   │   │   └── JudgeDemoBar.tsx
-│   │   ├── landing/         # Problem statement landing page & features
-│   │   │   └── LandingPage.tsx
-│   │   └── patient/         # Booking wizard, radar matching, live tracking, EHR
-│   │       ├── BookDoctorModal.tsx
-│   │       ├── DoctorMatchingModal.tsx
-│   │       ├── LiveTrackingView.tsx
-│   │       ├── MedicalRecordsView.tsx
-│   │       ├── MedicineFinderView.tsx
-│   │       ├── PatientDashboard.tsx
-│   │       ├── PatientProfileModal.tsx
-│   │       ├── PrescriptionModal.tsx
-│   │       ├── SmsIvrFallbackView.tsx
-│   │       └── VoiceInputModal.tsx
-│   ├── context/             # React State Providers
-│   │   ├── AuthContext.tsx
-│   │   ├── LanguageContext.tsx
-│   │   ├── NetworkContext.tsx
-│   │   └── NotificationContext.tsx
-│   ├── data/                # Realistic Maharashtra datasets & multi-language dictionaries
-│   │   ├── mockData.ts
-│   │   └── translations.ts
-│   ├── services/            # Domain Business Logic & REST interfaces
-│   │   ├── analyticsService.ts
-│   │   ├── emergencyService.ts
-│   │   ├── liveTrackingService.ts
-│   │   ├── matchingService.ts
-│   │   ├── medicalRecordService.ts
-│   │   ├── medicineService.ts
-│   │   ├── offlineSyncService.ts
-│   │   ├── prescriptionService.ts
-│   │   └── referralService.ts
-│   ├── types/               # Strict TypeScript definitions
-│   │   └── index.ts
-│   ├── App.tsx              # Main entry orchestration
-│   ├── index.css            # Tailwind & print media styles
-│   └── main.tsx             # React DOM root
+│   │   ├── admin/           # District Health Officer Command Center (Pune)
+│   │   ├── ambulance/       # 108 ALS Ambulance Driver Console & Pre-Arrival Broadcast
+│   │   ├── auth/            # 6-Role Card Grid & 1-Click Persona Switcher
+│   │   ├── common/          # Navbar, Footer, Language Selector, LeafletMap, Offline Banner
+│   │   ├── doctor/          # Dynamic Priority Queue, Consultation Room & Rx Builder
+│   │   ├── emergency/       # 108 Emergency SOS Dispatch & Nearest Facility Matching
+│   │   ├── healthworker/    # ASHA Console, Offline Patient Registration, Household Registry
+│   │   ├── highrisk/        # Maternal, Child & NCD High-Risk Follow-up Modal
+│   │   ├── hospital/        # Hospital Admin Dashboard & Incoming Pre-Arrival Banner
+│   │   ├── judge/           # 19-Stage Walkthrough, Innovations, SIH Alignment, Tech Architecture
+│   │   ├── landing/         # Public Portal, Vision, Multi-Tier Care Pathway & Statistics
+│   │   └── patient/         # Care Near Me, Doorstep Visit, Voice/AI Triage, Rx, Diagnostics
+│   ├── context/             # Auth (6 Roles), Network (Offline mode), Language (4 Langs), Notifications
+│   ├── data/                # Realistic Pune/Shirur Datasets & Multilingual Dictionaries
+│   ├── services/            # Dynamic Queue, Triage, Referral, Emergency, Diagnostics, Offline Sync
+│   ├── types/               # Full TypeScript Domain Schema
+│   ├── App.tsx              # Main Orchestration & Global State
+│   ├── index.css            # Tailwind Styles & Print Styles
+│   └── main.tsx             # React Root
 ├── index.html
 ├── package.json
 ├── tailwind.config.js
@@ -206,13 +124,11 @@ ruralcare-connect/
 
 ---
 
-## 🔮 Future Production Integration Roadmap
+## 🔒 Security, Ethics & Clinical Safety Compliance
 
-1. **Backend Migration**: Modular mock services can be directly swapped with a Django/FastAPI or Node.js/NestJS REST layer.
-2. **PostgreSQL & PostGIS**: Replace the in-memory Haversine distance calculations with spatial indexing (`ST_DWithin`, `ST_Distance`) for sub-millisecond doctor and ambulance geocaching.
-3. **Realtime WebSocket / MQTT**: Integrate with MQTT / Firebase for two-way telemetry exchange between mobile doctor devices and hospital dispatchers.
-4. **National Health Mission Integration**: Plug directly into India's ABDM (Ayushman Bharat Digital Mission) gateway via NDHM M1/M2/M3 API bridges for real ABHA health ID verification and electronic health record federated exchange.
-5. **Telecom Gateway Integration**: Connect the mock SMS/IVR system to Bharat Sanchar Nigam Limited (BSNL) or state telecom USSD gateways to support feature-phone users without data connections.
+- **Non-Autonomous AI Decision Support:** All triage suggestions explicitly carry a statutory advisory stating that clinical decisions remain the sole prerogative of registered medical practitioners.
+- **ABDM Compliance:** Designed according to NDHM (National Digital Health Mission) M1, M2, and M3 standards for ABHA ID generation, consent artifacts, and FHIR resource representation.
+- **Zero Lock-In Public Infrastructure:** Built entirely on open-source web technologies and OpenStreetMap with zero mandatory proprietary cloud API dependencies.
 
 ---
 

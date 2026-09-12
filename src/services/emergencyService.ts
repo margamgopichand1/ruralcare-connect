@@ -1,13 +1,38 @@
-import { Ambulance, EmergencyRequest, Facility } from '../types';
-import { mockAmbulances, mockFacilities } from '../data/mockData';
+import { Ambulance, EmergencyRequest, Facility, PreArrivalAlert } from '../types';
+import { mockAmbulances, mockFacilities, mockPreArrivalAlerts } from '../data/mockData';
 import { calculateHaversineDistance, estimateEtaMinutes } from './matchingService';
 
 export interface EmergencyDispatchResult {
   request: EmergencyRequest;
   ambulance: Ambulance;
   hospital: Facility;
+  alert: PreArrivalAlert;
   smsMessage: string;
   disclaimer: string;
+  routeDistanceKm: number;
+}
+
+const PRE_ARRIVAL_STORAGE_KEY = 'ruralcare_prearrival_alerts';
+
+export function getPreArrivalAlerts(): PreArrivalAlert[] {
+  try {
+    const data = localStorage.getItem(PRE_ARRIVAL_STORAGE_KEY);
+    if (data) {
+      return JSON.parse(data);
+    }
+  } catch (e) {
+    console.error('Error reading pre-arrival alerts', e);
+  }
+  return mockPreArrivalAlerts;
+}
+
+export function savePreArrivalAlerts(alerts: PreArrivalAlert[]) {
+  try {
+    localStorage.setItem(PRE_ARRIVAL_STORAGE_KEY, JSON.stringify(alerts));
+    window.dispatchEvent(new CustomEvent('ruralcare_emergency_alert_received'));
+  } catch (e) {
+    console.error('Error saving pre-arrival alerts', e);
+  }
 }
 
 export function triggerEmergencySos(
@@ -18,7 +43,8 @@ export function triggerEmergencySos(
   patientLat: number,
   patientLng: number,
   emergencyContactName: string,
-  emergencyContactPhone: string
+  emergencyContactPhone: string,
+  suspectedCondition: string = 'Severe respiratory / cardiovascular emergency'
 ): EmergencyDispatchResult {
   // 1. Find nearest available ambulance
   const availableAmbulances = mockAmbulances.filter((a) => a.isAvailable);
@@ -37,19 +63,19 @@ export function triggerEmergencySos(
 
   const calculatedEta = estimateEtaMinutes(minDistance);
 
-  // 2. Find nearest hospital with emergency services (District Hospital or CHC)
+  // 2. Find recommended hospital factoring clinical capability (District Hospital or CHC with ICU/OT)
   const emergencyHospitals = mockFacilities.filter(
     (f) => f.type === 'District Hospital' || f.type === 'CHC'
   );
 
-  let nearestHospital = emergencyHospitals[0];
+  let recommendedHospital = emergencyHospitals[0];
   let minHospDist = 9999;
 
   for (const hosp of emergencyHospitals) {
     const dist = calculateHaversineDistance(patientLat, patientLng, hosp.lat, hosp.lng);
     if (dist < minHospDist) {
       minHospDist = dist;
-      nearestHospital = hosp;
+      recommendedHospital = hosp;
     }
   }
 
@@ -65,23 +91,46 @@ export function triggerEmergencySos(
     ambulanceId: nearestAmbulance.id,
     ambulanceNumber: nearestAmbulance.vehicleNumber,
     ambulanceDriverPhone: nearestAmbulance.driverPhone,
-    hospitalId: nearestHospital.id,
-    hospitalName: nearestHospital.name,
-    status: 'dispatched',
+    hospitalId: recommendedHospital.id,
+    hospitalName: recommendedHospital.name,
+    status: 'en_route',
     etaMinutes: calculatedEta,
     timestamp: new Date().toISOString(),
-    notes: 'Emergency 108 SOS triggered from mobile doorstep platform.'
+    notes: `Emergency 108 SOS triggered from doorstep. Suspected: ${suspectedCondition}`
   };
 
-  const smsMessage = `[ALERT] Emergency 108 SOS triggered for ${patientName} at ${village}. Ambulance ${nearestAmbulance.vehicleNumber} dispatched (Driver: ${nearestAmbulance.driverName}, ${nearestAmbulance.driverPhone}). Nearest facility: ${nearestHospital.name}. RuralCare Connect - Govt of Maharashtra.`;
+  // 3. Pre-Arrival Alert for Hospital Admin Dashboard
+  const preArrivalAlert: PreArrivalAlert = {
+    id: `alert-${Date.now()}`,
+    hospitalId: recommendedHospital.id,
+    hospitalName: recommendedHospital.name,
+    ambulanceNumber: nearestAmbulance.vehicleNumber,
+    patientName,
+    patientAge: 48,
+    patientGender: 'Male',
+    condition: suspectedCondition,
+    priority: 'critical',
+    etaMinutes: calculatedEta + estimateEtaMinutes(minHospDist),
+    requiredCare: 'Emergency Department / Intensive Resuscitation Unit',
+    timestamp: 'Just now',
+    status: 'incoming'
+  };
 
-  const disclaimer = 'ETA is the fastest available estimate and depends on ambulance availability, rural road conditions, and dispatch load.';
+  const currentAlerts = getPreArrivalAlerts();
+  currentAlerts.unshift(preArrivalAlert);
+  savePreArrivalAlerts(currentAlerts);
+
+  const smsMessage = `[ALERT] Emergency 108 SOS triggered for ${patientName} at ${village}. Ambulance ${nearestAmbulance.vehicleNumber} dispatched (Driver: ${nearestAmbulance.driverName}, ${nearestAmbulance.driverPhone}). Destination facility: ${recommendedHospital.name}. RuralCare Connect - Govt of Maharashtra.`;
+
+  const disclaimer = 'RuralCare Connect coordinates with state 108 emergency services. For critical life-threatening situations, dial 108 directly if connectivity is lost.';
 
   return {
     request,
     ambulance: nearestAmbulance,
-    hospital: nearestHospital,
+    hospital: recommendedHospital,
+    alert: preArrivalAlert,
     smsMessage,
-    disclaimer
+    disclaimer,
+    routeDistanceKm: minHospDist
   };
 }

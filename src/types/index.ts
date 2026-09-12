@@ -1,4 +1,11 @@
-export type UserRole = 'patient' | 'doctor' | 'admin';
+export type UserRole = 
+  | 'patient' 
+  | 'health_worker' 
+  | 'doctor' 
+  | 'ambulance' 
+  | 'hospital_admin' 
+  | 'district_admin' 
+  | 'admin';
 
 export type Language = 'en' | 'mr' | 'hi' | 'te';
 
@@ -156,7 +163,17 @@ export interface Referral {
   hospitalName: string;
   reason: string;
   urgency: 'routine' | 'priority' | 'immediate';
-  status: 'pending' | 'scheduled' | 'completed';
+  status: 
+    | 'Created' 
+    | 'Accepted' 
+    | 'Scheduled' 
+    | 'Patient En Route' 
+    | 'Arrived' 
+    | 'Consulted' 
+    | 'Completed'
+    | 'pending'
+    | 'scheduled'
+    | 'completed';
   date: string;
   facilityAddress: string;
 }
@@ -245,13 +262,13 @@ export interface EmergencyRequest {
 
 export interface NotificationItem {
   id: string;
-  recipientRole: 'patient' | 'doctor' | 'admin' | 'all';
+  recipientRole: UserRole | 'all';
   recipientId?: string;
   title: string;
   message: string;
   timestamp: string;
   read: boolean;
-  type: 'visit' | 'sos' | 'record' | 'stock' | 'system';
+  type: 'visit' | 'sos' | 'record' | 'stock' | 'system' | 'referral' | 'queue';
 }
 
 export interface DistrictMetrics {
@@ -285,3 +302,122 @@ export interface DistrictMetrics {
     time: string;
   }[];
 }
+
+export type QueuePriority = 'normal' | 'urgent' | 'critical';
+
+export interface QueueItem {
+  id: string;
+  tokenNumber: string; // e.g. "A-027"
+  patientId: string;
+  patientName: string;
+  age: number;
+  gender: 'Male' | 'Female' | 'Other';
+  reason: string;
+  priority: QueuePriority;
+  status: 'waiting' | 'in_consultation' | 'completed' | 'referred';
+  estimatedWaitMinutes: number;
+  arrivedAt: string;
+  updatedByClinicalStaff?: boolean;
+  notes?: string;
+}
+
+export interface PreArrivalAlert {
+  id: string;
+  hospitalId: string;
+  hospitalName: string;
+  ambulanceNumber: string;
+  patientName: string;
+  patientAge: number;
+  patientGender: string;
+  condition: string;
+  priority: 'urgent' | 'critical';
+  etaMinutes: number;
+  requiredCare: string; // e.g. "Emergency Dept / Cath Lab", "Trauma Care / OT"
+  timestamp: string;
+  status: 'incoming' | 'acknowledged' | 'arrived';
+}
+
+export interface DiagnosticTestItem {
+  id: string;
+  name: string;
+  category: 'Blood Test' | 'Imaging' | 'Cardiac' | 'Microbiology' | 'General';
+  description: string;
+  turnaroundTime: string;
+  sampleType: string;
+  participatingFacilities: string[];
+}
+
+export interface DiagnosticBooking {
+  id: string;
+  patientId: string;
+  patientName: string;
+  testId: string;
+  testName: string;
+  facilityId: string;
+  facilityName: string;
+  facilityDistanceKm: number;
+  date: string;
+  slot: string;
+  status: 'scheduled' | 'sample_collected' | 'analyzing' | 'completed';
+  reportUrl?: string;
+  reportDate?: string;
+  findingsSummary?: string;
+  reviewedByDoctor?: string;
+}
+
+export interface HighRiskPatient {
+  id: string;
+  patientId: string;
+  patientName: string;
+  age: number;
+  gender: 'Male' | 'Female' | 'Other';
+  village: string;
+  taluka: string;
+  conditionCategory: 'maternal' | 'child' | 'diabetes' | 'hypertension' | 'chronic_kidney' | 'tb';
+  conditionName: string;
+  riskLevel: 'high' | 'critical';
+  lastVisitDate: string;
+  nextFollowUpDate: string;
+  status: 'due_soon' | 'overdue' | 'completed';
+  missedVisitsCount: number;
+  ashaWorkerAssigned: string;
+  ashaPhone: string;
+  patientPhone: string;
+  notes: string;
+}
+
+export interface NearbyProvider {
+  id: string;
+  name: string;
+  role: 'doctor' | 'asha' | 'nurse';
+  qualification: string;
+  specialization: string;
+  distanceKm: number;
+  etaMinutes: number;
+  areaServed: string;
+  services: string[];
+  isAvailable: boolean;
+  isVerified: boolean;
+  phone: string;
+  avatar: string;
+}
+
+export interface AuditLogItem {
+  id: string;
+  timestamp: string;
+  userName: string;
+  role: UserRole;
+  action: string;
+  resource: string;
+  facility: string;
+  status: 'SUCCESS' | 'WARNING';
+}
+
+export interface OfflineQueuedRecord {
+  id: string;
+  timestamp: string;
+  type: 'patient_reg' | 'clinical_note' | 'vitals_entry' | 'home_visit';
+  data: any;
+  synced: boolean;
+}
+

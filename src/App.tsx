@@ -15,31 +15,64 @@ import { RoleSelectModal } from './components/auth/RoleSelectModal';
 
 // Patient Components
 import { PatientDashboard } from './components/patient/PatientDashboard';
-import { BookDoctorModal } from './components/patient/BookDoctorModal';
-import { DoctorMatchingModal } from './components/patient/DoctorMatchingModal';
-import { LiveTrackingView } from './components/patient/LiveTrackingView';
+import { CareNearMeModal } from './components/patient/CareNearMeModal';
+import { HomeVisitModal } from './components/patient/HomeVisitModal';
+import { AiTriageModal } from './components/patient/AiTriageModal';
+import { DoctorDiscoveryModal } from './components/patient/DoctorDiscoveryModal';
+import { DiagnosticBookingModal } from './components/patient/DiagnosticBookingModal';
+import { ReferralTrackingModal } from './components/patient/ReferralTrackingModal';
 import { MedicalRecordsView } from './components/patient/MedicalRecordsView';
-import { PrescriptionModal } from './components/patient/PrescriptionModal';
 import { MedicineFinderView } from './components/patient/MedicineFinderView';
 import { SmsIvrFallbackView } from './components/patient/SmsIvrFallbackView';
 import { PatientProfileModal } from './components/patient/PatientProfileModal';
+import { BookDoctorModal } from './components/patient/BookDoctorModal';
+import { DoctorMatchingModal } from './components/patient/DoctorMatchingModal';
+import { LiveTrackingView } from './components/patient/LiveTrackingView';
+import { PrescriptionModal } from './components/patient/PrescriptionModal';
 
 // Doctor Components
 import { DoctorDashboard } from './components/doctor/DoctorDashboard';
+import { ConsultationModal } from './components/doctor/ConsultationModal';
 import { DoctorVerificationModal } from './components/doctor/DoctorVerificationModal';
-import { VisitWorkflowModal } from './components/doctor/VisitWorkflowModal';
 
-// Emergency SOS & Admin
+// Health Worker Components
+import { HealthWorkerDashboard } from './components/healthworker/HealthWorkerDashboard';
+import { PatientRegistrationModal } from './components/healthworker/PatientRegistrationModal';
+import { HighRiskFollowupModal } from './components/highrisk/HighRiskFollowupModal';
+
+// Ambulance & Hospital Admin Components
+import { AmbulanceDashboard } from './components/ambulance/AmbulanceDashboard';
+import { HospitalAdminDashboard } from './components/hospital/HospitalAdminDashboard';
+
+// Emergency SOS & District Admin
 import { EmergencySosModal } from './components/emergency/EmergencySosModal';
 import { GovernmentDashboard } from './components/admin/GovernmentDashboard';
 
-// Judge Presentation Mode
+// Judge Presentation Mode Modals
 import { JudgeDemoBar } from './components/judge/JudgeDemoBar';
+import { JudgeScenarioModal } from './components/judge/JudgeScenarioModal';
+import { InnovationsModal } from './components/judge/InnovationsModal';
+import { SihAlignmentModal } from './components/judge/SihAlignmentModal';
+import { TechArchitectureModal } from './components/judge/TechArchitectureModal';
 
 // Types & Mock Data
-import { Doctor, Prescription, VisitCategory, VisitRequest, VisitUrgency } from './types';
-import { mockDoctors, mockPatients } from './data/mockData';
-import { Home, FileText, Pill, AlertTriangle, User, Navigation, Stethoscope, Building2, ShieldCheck } from 'lucide-react';
+import { Doctor, Prescription, VisitCategory, VisitRequest, VisitUrgency, NearbyProvider, QueueItem, HighRiskPatient } from './types';
+import { mockDoctors, mockPatients, mockNearbyProviders } from './data/mockData';
+import { 
+  Home, 
+  FileText, 
+  Pill, 
+  AlertTriangle, 
+  User, 
+  Navigation, 
+  Stethoscope, 
+  Building2, 
+  ShieldCheck, 
+  HeartHandshake, 
+  Landmark,
+  MapPin,
+  Sparkles
+} from 'lucide-react';
 
 const MainApp: React.FC = () => {
   const { role, switchRole, currentPatient, currentDoctor } = useAuth();
@@ -52,132 +85,91 @@ const MainApp: React.FC = () => {
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [isSosModalOpen, setIsSosModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isCareNearMeOpen, setIsCareNearMeOpen] = useState(false);
+  const [isHomeVisitOpen, setIsHomeVisitOpen] = useState(false);
+  const [selectedHomeVisitProvider, setSelectedHomeVisitProvider] = useState<NearbyProvider | null>(null);
+  const [isTriageOpen, setIsTriageOpen] = useState(false);
+  const [isDoctorDiscoveryOpen, setIsDoctorDiscoveryOpen] = useState(false);
+  const [isDiagnosticsOpen, setIsDiagnosticsOpen] = useState(false);
+  const [isReferralTrackingOpen, setIsReferralTrackingOpen] = useState(false);
+  const [isConsultationOpen, setIsConsultationOpen] = useState(false);
+  const [selectedQueueItem, setSelectedQueueItem] = useState<QueueItem | null>(null);
+  const [isRegisterPatientOpen, setIsRegisterPatientOpen] = useState(false);
+  const [isHighRiskModalOpen, setIsHighRiskModalOpen] = useState(false);
+  const [selectedHighRiskPatient, setSelectedHighRiskPatient] = useState<HighRiskPatient | null>(null);
+
+  // Judge Presentation Modals
+  const [isScenarioModalOpen, setIsScenarioModalOpen] = useState(false);
+  const [isInnovationsModalOpen, setIsInnovationsModalOpen] = useState(false);
+  const [isSihAlignmentModalOpen, setIsSihAlignmentModalOpen] = useState(false);
+  const [isTechArchitectureModalOpen, setIsTechArchitectureModalOpen] = useState(false);
+
+  // Legacy Matching & Tracking States
   const [isBookDoctorOpen, setIsBookDoctorOpen] = useState(false);
   const [isMatchingOpen, setIsMatchingOpen] = useState(false);
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
-  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
-  const [isWorkflowModalOpen, setIsWorkflowModalOpen] = useState(false);
-
-  // Active visit and matching payload
-  const [matchingParams, setMatchingParams] = useState<{
-    category: VisitCategory;
-    symptoms: string;
-    urgency: VisitUrgency;
-    lat: number;
-    lng: number;
-    address: string;
-  }>({
-    category: 'fever',
-    symptoms: 'High fever (102°F) and headache.',
-    urgency: 'soon',
-    lat: 18.8256,
-    lng: 74.3721,
-    address: 'Near Vitthal Temple, Karegaon, Shirur'
+  const [activePrescription, setActivePrescription] = useState<Prescription | null>({
+    id: 'RX-2026-8942',
+    visitId: 'VIS-991',
+    patientId: 'P-101',
+    patientName: 'Ramesh Patil',
+    patientAge: 48,
+    patientGender: 'Male',
+    doctorId: 'D-201',
+    doctorName: 'Dr. Priya Sharma',
+    doctorQualification: 'MBBS, DNB (Internal Medicine)',
+    doctorLicense: 'MMC-2018-09384',
+    facilityName: 'Karegaon Primary Health Centre (PHC)',
+    date: '12 Sep 2026',
+    vitals: {
+      temperature: '101.4 °F',
+      bloodPressure: '138/88 mmHg',
+      heartRate: '84 bpm',
+      spO2: '97%'
+    },
+    diagnosis: 'Acute Febrile Illness with Mild Dehydration (Suspected Viral Infection)',
+    medicines: [
+      {
+        name: 'Tab. Paracetamol IP',
+        dosage: '650 mg',
+        frequency: '1-0-1 (SOS / After Food)',
+        duration: '3 days',
+        instructions: 'Take with warm water if fever exceeds 100°F'
+      },
+      {
+        name: 'ORS (Oral Rehydration Salts) Sachet',
+        dosage: '1 sachet in 1L boiled & cooled water',
+        frequency: 'Sip frequently throughout day',
+        duration: '3 days',
+        instructions: 'Maintain active fluid hydration'
+      },
+      {
+        name: 'Tab. Cetirizine Hydrochloride',
+        dosage: '10 mg',
+        frequency: '0-0-1 (At Bedtime)',
+        duration: '5 days',
+        instructions: 'For allergic rhinitis / body congestion'
+      }
+    ],
+    instructions: 'Rest adequately for 48 hours. Drink at least 2.5 litres of fluids. If temperature exceeds 102°F or breathlessness develops, contact ASHA Lakshmi Devi immediately or call 108.',
+    followUpDate: '15 Sep 2026 at Karegaon PHC'
   });
-
   const [activeDoctor, setActiveDoctor] = useState<Doctor>(mockDoctors[0]);
   const [activeVisitRequest, setActiveVisitRequest] = useState<VisitRequest | null>(null);
-  const [activePrescription, setActivePrescription] = useState<Prescription | null>(null);
 
-  // Handlers for Booking & Matching Flow
-  const handleStartMatching = (reqData: any) => {
-    setMatchingParams(reqData);
-    setIsMatchingOpen(true);
+  const handleStartHomeVisit = (prov?: NearbyProvider) => {
+    if (prov) setSelectedHomeVisitProvider(prov);
+    setIsHomeVisitOpen(true);
   };
 
-  const handleDoctorAccepted = (matchedDoc: Doctor, distanceKm: number, etaMin: number) => {
-    setActiveDoctor(matchedDoc);
-
-    const visitReq: VisitRequest = {
-      id: `req-${Date.now()}`,
-      patientId: currentPatient?.id || 'pat-1',
-      patientName: currentPatient?.name || 'Ramesh Patil',
-      patientAge: currentPatient?.age || 48,
-      patientGender: currentPatient?.gender || 'Male',
-      category: matchingParams.category,
-      symptoms: matchingParams.symptoms,
-      urgency: matchingParams.urgency,
-      lat: matchingParams.lat,
-      lng: matchingParams.lng,
-      address: matchingParams.address,
-      preferredLanguage: 'mr',
-      doctorId: matchedDoc.id,
-      doctorName: matchedDoc.name,
-      doctorSpecialty: matchedDoc.specialization,
-      status: 'en_route',
-      distanceKm,
-      etaMinutes: etaMin,
-      requestedAt: new Date().toISOString()
-    };
-
-    setActiveVisitRequest(visitReq);
-    addNotification(
-      'Visit Request Accepted',
-      `${matchedDoc.name} is en route to your doorstep (${distanceKm} km, ETA: ${etaMin} min).`,
-      'visit',
-      'patient'
-    );
-    setActiveTab('live-tracking');
+  const handleOpenConsultation = (item: QueueItem) => {
+    setSelectedQueueItem(item);
+    setIsConsultationOpen(true);
   };
 
-  const handleSelectDoctorDirectly = (doc: Doctor) => {
-    setActiveDoctor(doc);
-    handleStartMatching({
-      category: 'general',
-      symptoms: 'Doorstep checkup request',
-      urgency: 'soon',
-      lat: currentPatient?.lat || 18.8256,
-      lng: currentPatient?.lng || 74.3721,
-      address: 'Karegaon, Shirur'
-    });
-  };
-
-  const handleViewPrescriptionById = (pId: string) => {
-    setIsPrescriptionModalOpen(true);
-  };
-
-  // 1-Click Judge Guided Scenarios
-  const triggerPatientJourney = () => {
-    switchRole('patient');
-    setActiveTab('home');
-    setIsBookDoctorOpen(true);
-  };
-
-  const triggerDoctorJourney = () => {
-    switchRole('doctor');
-    setActiveTab('doctor-dashboard');
-    // Prepare a sample pending request and launch workflow
-    const sampleReq: VisitRequest = {
-      id: `req-judge-${Date.now()}`,
-      patientId: 'pat-1',
-      patientName: 'Ramesh Patil',
-      patientAge: 48,
-      patientGender: 'Male',
-      category: 'fever',
-      symptoms: 'High fever (102°F), shivering, and acute weakness since yesterday.',
-      urgency: 'urgent',
-      lat: 18.8256,
-      lng: 74.3721,
-      address: 'Near Vitthal Temple, Karegaon, Tal. Shirur',
-      preferredLanguage: 'mr',
-      doctorId: mockDoctors[0].id,
-      doctorName: mockDoctors[0].name,
-      status: 'accepted',
-      distanceKm: 1.8,
-      etaMinutes: 8,
-      requestedAt: 'Just now'
-    };
-    setActiveVisitRequest(sampleReq);
-    setIsWorkflowModalOpen(true);
-  };
-
-  const triggerEmergencySos = () => {
-    setIsSosModalOpen(true);
-  };
-
-  const triggerGovernmentDashboard = () => {
-    switchRole('admin');
-    setActiveTab('admin-dashboard');
+  const handleOpenHighRisk = (pt: HighRiskPatient) => {
+    setSelectedHighRiskPatient(pt);
+    setIsHighRiskModalOpen(true);
   };
 
   return (
@@ -190,13 +182,14 @@ const MainApp: React.FC = () => {
         onOpenRoleModal={() => setIsRoleModalOpen(true)}
         onOpenSosModal={() => setIsSosModalOpen(true)}
         onOpenProfileModal={() => setIsProfileModalOpen(true)}
+        onOpenCareNearMe={() => setIsCareNearMeOpen(true)}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
 
       {/* Dynamic View Content */}
       <main className="flex-1">
-        {/* LANDING VIEW */}
+        {/* PUBLIC LANDING VIEW */}
         {activeTab === 'landing' && (
           <LandingPage
             onGetHealthcare={() => {
@@ -209,21 +202,35 @@ const MainApp: React.FC = () => {
             }}
             onOpenSos={() => setIsSosModalOpen(true)}
             onViewAdmin={() => {
-              switchRole('admin');
+              switchRole('district_admin');
               setActiveTab('admin-dashboard');
             }}
+            onStartDemo={() => setIsScenarioModalOpen(true)}
+            onOpenInnovations={() => setIsInnovationsModalOpen(true)}
+            onOpenSihAlignment={() => setIsSihAlignmentModalOpen(true)}
+            onOpenTechArchitecture={() => setIsTechArchitectureModalOpen(true)}
           />
         )}
 
-        {/* PATIENT VIEWS */}
-        {role === 'patient' && (
+        {/* 1. PATIENT VIEWS */}
+        {role === 'patient' && activeTab !== 'landing' && (
           <>
             {activeTab === 'home' && (
               <PatientDashboard
-                onOpenBooking={(cat) => setIsBookDoctorOpen(true)}
+                onOpenBooking={() => setIsDoctorDiscoveryOpen(true)}
+                onOpenCareNearMe={() => setIsCareNearMeOpen(true)}
+                onOpenHomeVisit={handleStartHomeVisit}
+                onOpenTeleconsult={() => setIsDoctorDiscoveryOpen(true)}
+                onOpenMedicineSearch={() => setActiveTab('medicines')}
+                onOpenDiagnostics={() => setIsDiagnosticsOpen(true)}
+                onOpenRecords={() => setActiveTab('records')}
+                onOpenReferralTracking={() => setIsReferralTrackingOpen(true)}
                 onOpenSos={() => setIsSosModalOpen(true)}
-                onNavigateTab={(tab) => setActiveTab(tab)}
-                onSelectDoctorDirectly={handleSelectDoctorDirectly}
+                onOpenTriage={() => setIsTriageOpen(true)}
+                onSelectDoctorDirectly={(doc) => {
+                  setActiveDoctor(doc);
+                  setIsDoctorDiscoveryOpen(true);
+                }}
                 activeVisitRequest={activeVisitRequest}
               />
             )}
@@ -231,8 +238,8 @@ const MainApp: React.FC = () => {
             {activeTab === 'live-tracking' && (
               <LiveTrackingView
                 doctor={activeDoctor}
-                patientLat={matchingParams.lat}
-                patientLng={matchingParams.lng}
+                patientLat={18.8256}
+                patientLng={74.3721}
                 initialDistanceKm={activeVisitRequest?.distanceKm || 1.8}
                 initialEtaMinutes={activeVisitRequest?.etaMinutes || 8}
                 visitRequest={activeVisitRequest || undefined}
@@ -248,7 +255,7 @@ const MainApp: React.FC = () => {
 
             {activeTab === 'records' && (
               <MedicalRecordsView
-                onViewPrescriptionById={handleViewPrescriptionById}
+                onViewPrescriptionById={() => setIsPrescriptionModalOpen(true)}
               />
             )}
 
@@ -258,35 +265,58 @@ const MainApp: React.FC = () => {
           </>
         )}
 
-        {/* DOCTOR VIEWS */}
-        {role === 'doctor' && (
+        {/* 2. HEALTH WORKER (ASHA / ANM) VIEWS */}
+        {role === 'health_worker' && activeTab !== 'landing' && (
           <>
-            {(activeTab === 'doctor-dashboard' || activeTab === 'home') && (
-              <DoctorDashboard
-                onStartWorkflow={(req) => {
-                  setActiveVisitRequest(req);
-                  setIsWorkflowModalOpen(true);
-                }}
-                onOpenVerification={() => setIsVerificationModalOpen(true)}
+            {activeTab === 'home' && (
+              <HealthWorkerDashboard
+                onOpenRegisterPatient={() => setIsRegisterPatientOpen(true)}
+                onOpenTriage={() => setIsTriageOpen(true)}
+                onOpenHomeVisit={() => handleStartHomeVisit()}
+                onOpenReferralTracking={() => setIsReferralTrackingOpen(true)}
+                onOpenMedicineSearch={() => setActiveTab('medicines')}
+                onOpenDiagnostics={() => setIsDiagnosticsOpen(true)}
+                onOpenRecords={() => setActiveTab('records')}
+                onOpenHighRiskDetails={handleOpenHighRisk}
               />
             )}
-
-            {activeTab === 'doctor-verification' && (
-              <div className="p-6">
-                <button
-                  onClick={() => setIsVerificationModalOpen(true)}
-                  className="px-6 py-3 bg-health-700 text-white font-bold rounded-xl"
-                >
-                  Open Verification Window
-                </button>
-              </div>
-            )}
+            {activeTab === 'medicines' && <MedicineFinderView />}
+            {activeTab === 'records' && <MedicalRecordsView onViewPrescriptionById={() => setIsPrescriptionModalOpen(true)} />}
           </>
         )}
 
-        {/* ADMIN VIEWS */}
-        {role === 'admin' && (
-          <GovernmentDashboard />
+        {/* 3. DOCTOR VIEWS */}
+        {role === 'doctor' && activeTab !== 'landing' && (
+          <>
+            {(activeTab === 'doctor-dashboard' || activeTab === 'home') && (
+              <DoctorDashboard
+                onOpenConsultation={handleOpenConsultation}
+                onOpenPriorityModal={() => {}}
+              />
+            )}
+            {activeTab === 'medicines' && <MedicineFinderView />}
+          </>
+        )}
+
+        {/* 4. AMBULANCE DRIVER VIEWS */}
+        {role === 'ambulance' && activeTab !== 'landing' && (
+          <AmbulanceDashboard />
+        )}
+
+        {/* 5. HOSPITAL ADMINISTRATOR VIEWS */}
+        {role === 'hospital_admin' && activeTab !== 'landing' && (
+          <>
+            {activeTab === 'home' && <HospitalAdminDashboard />}
+            {activeTab === 'medicines' && <MedicineFinderView />}
+          </>
+        )}
+
+        {/* 6. DISTRICT HEALTH ADMINISTRATOR VIEWS */}
+        {(role === 'district_admin' || role === 'admin') && activeTab !== 'landing' && (
+          <>
+            {(activeTab === 'admin-dashboard' || activeTab === 'home') && <GovernmentDashboard />}
+            {activeTab === 'medicines' && <MedicineFinderView />}
+          </>
         )}
       </main>
 
@@ -300,20 +330,18 @@ const MainApp: React.FC = () => {
             <button
               onClick={() => setActiveTab('home')}
               className={`flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold ${
-                activeTab === 'home' ? 'text-health-700' : 'text-slate-500'
+                activeTab === 'home' ? 'text-emerald-700' : 'text-slate-500'
               }`}
             >
               <Home className="w-5 h-5" />
               <span>Home</span>
             </button>
             <button
-              onClick={() => setActiveTab(activeVisitRequest ? 'live-tracking' : 'records')}
-              className={`flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold ${
-                activeTab === 'live-tracking' ? 'text-health-700' : 'text-slate-500'
-              }`}
+              onClick={() => setIsCareNearMeOpen(true)}
+              className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-slate-500"
             >
-              <Navigation className="w-5 h-5" />
-              <span>Track Visit</span>
+              <MapPin className="w-5 h-5" />
+              <span>Care Near Me</span>
             </button>
             <button
               onClick={() => setIsSosModalOpen(true)}
@@ -327,7 +355,7 @@ const MainApp: React.FC = () => {
             <button
               onClick={() => setActiveTab('records')}
               className={`flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold ${
-                activeTab === 'records' ? 'text-health-700' : 'text-slate-500'
+                activeTab === 'records' ? 'text-emerald-700' : 'text-slate-500'
               }`}
             >
               <FileText className="w-5 h-5" />
@@ -343,48 +371,79 @@ const MainApp: React.FC = () => {
           </>
         )}
 
-        {role === 'doctor' && (
+        {role === 'health_worker' && (
           <>
             <button
-              onClick={() => setActiveTab('doctor-dashboard')}
-              className={`flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold ${
-                activeTab === 'doctor-dashboard' ? 'text-health-700' : 'text-slate-500'
-              }`}
+              onClick={() => setActiveTab('home')}
+              className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-emerald-700"
             >
-              <Stethoscope className="w-5 h-5" />
-              <span>Console</span>
+              <HeartHandshake className="w-5 h-5" />
+              <span>ASHA Hub</span>
             </button>
             <button
-              onClick={() => setIsVerificationModalOpen(true)}
+              onClick={() => setIsRegisterPatientOpen(true)}
               className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-slate-500"
             >
-              <ShieldCheck className="w-5 h-5" />
-              <span>Verify</span>
+              <User className="w-5 h-5" />
+              <span>Register</span>
+            </button>
+            <button
+              onClick={() => setIsTriageOpen(true)}
+              className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-slate-500"
+            >
+              <Sparkles className="w-5 h-5" />
+              <span>Triage</span>
             </button>
             <button
               onClick={() => setIsRoleModalOpen(true)}
               className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-slate-500"
             >
-              <User className="w-5 h-5" />
-              <span>Switch Role</span>
+              <ShieldCheck className="w-5 h-5" />
+              <span>Roles</span>
             </button>
           </>
         )}
 
-        {role === 'admin' && (
+        {role === 'doctor' && (
           <>
             <button
-              onClick={() => setActiveTab('admin-dashboard')}
-              className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-health-700"
+              onClick={() => setActiveTab('doctor-dashboard')}
+              className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-emerald-700"
             >
-              <Building2 className="w-5 h-5" />
-              <span>District Command</span>
+              <Stethoscope className="w-5 h-5" />
+              <span>OPD Queue</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('medicines')}
+              className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-slate-500"
+            >
+              <Pill className="w-5 h-5" />
+              <span>Pharmacy</span>
             </button>
             <button
               onClick={() => setIsRoleModalOpen(true)}
               className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-slate-500"
             >
-              <User className="w-5 h-5" />
+              <ShieldCheck className="w-5 h-5" />
+              <span>Roles</span>
+            </button>
+          </>
+        )}
+
+        {(role === 'ambulance' || role === 'hospital_admin' || role === 'district_admin' || role === 'admin') && (
+          <>
+            <button
+              onClick={() => setActiveTab('home')}
+              className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-emerald-700"
+            >
+              <Building2 className="w-5 h-5" />
+              <span>Dashboard</span>
+            </button>
+            <button
+              onClick={() => setIsRoleModalOpen(true)}
+              className="flex flex-col items-center gap-0.5 p-1 text-[10px] font-bold text-slate-500"
+            >
+              <ShieldCheck className="w-5 h-5" />
               <span>Switch Role</span>
             </button>
           </>
@@ -393,21 +452,26 @@ const MainApp: React.FC = () => {
 
       {/* Floating Judge Presentation Demo Bar */}
       <JudgeDemoBar
-        onTriggerPatientJourney={triggerPatientJourney}
-        onTriggerDoctorJourney={triggerDoctorJourney}
-        onTriggerEmergencySos={triggerEmergencySos}
-        onTriggerGovernmentDashboard={triggerGovernmentDashboard}
+        onOpenScenarioModal={() => setIsScenarioModalOpen(true)}
+        onOpenInnovationsModal={() => setIsInnovationsModalOpen(true)}
+        onOpenSihAlignmentModal={() => setIsSihAlignmentModalOpen(true)}
+        onOpenTechArchitectureModal={() => setIsTechArchitectureModalOpen(true)}
+        onTriggerEmergencySos={() => setIsSosModalOpen(true)}
       />
 
-      {/* MODALS */}
-      {/* 1. Role Selection Modal */}
+      {/* ============================================================ */}
+      {/* ALL INTERACTIVE MODALS & WORKFLOWS */}
+      {/* ============================================================ */}
+
+      {/* 1. 6-Role Selection Modal */}
       <RoleSelectModal
         isOpen={isRoleModalOpen}
         onClose={() => setIsRoleModalOpen(false)}
         onRoleSelected={(newRole) => {
           if (newRole === 'patient') setActiveTab('home');
           else if (newRole === 'doctor') setActiveTab('doctor-dashboard');
-          else setActiveTab('admin-dashboard');
+          else if (newRole === 'district_admin' || newRole === 'admin') setActiveTab('admin-dashboard');
+          else setActiveTab('home');
         }}
       />
 
@@ -423,112 +487,117 @@ const MainApp: React.FC = () => {
         onClose={() => setIsProfileModalOpen(false)}
       />
 
-      {/* 4. Book Doctor Wizard Modal */}
+      {/* 4. Care Near Me Modal */}
+      <CareNearMeModal
+        isOpen={isCareNearMeOpen}
+        onClose={() => setIsCareNearMeOpen(false)}
+        onRequestHomeVisit={(prov) => handleStartHomeVisit(prov)}
+      />
+
+      {/* 5. 10-Step Home Visit Workflow Modal */}
+      <HomeVisitModal
+        isOpen={isHomeVisitOpen}
+        onClose={() => setIsHomeVisitOpen(false)}
+        preselectedProvider={selectedHomeVisitProvider}
+        onEscalateToEmergency={() => setIsSosModalOpen(true)}
+      />
+
+      {/* 6. AI-Assisted Digital Triage Modal */}
+      <AiTriageModal
+        isOpen={isTriageOpen}
+        onClose={() => setIsTriageOpen(false)}
+        onTriggerSos={() => setIsSosModalOpen(true)}
+        onProceedToDoctorBooking={(syms) => setIsDoctorDiscoveryOpen(true)}
+        onRequestHomeVisit={() => handleStartHomeVisit()}
+      />
+
+      {/* 7. Doctor Discovery & Queue Booking Modal */}
+      <DoctorDiscoveryModal
+        isOpen={isDoctorDiscoveryOpen}
+        onClose={() => setIsDoctorDiscoveryOpen(false)}
+      />
+
+      {/* 8. Diagnostic Test Booking Modal */}
+      <DiagnosticBookingModal
+        isOpen={isDiagnosticsOpen}
+        onClose={() => setIsDiagnosticsOpen(false)}
+      />
+
+      {/* 9. Smart Referral 7-Stage Tracker Modal */}
+      <ReferralTrackingModal
+        isOpen={isReferralTrackingOpen}
+        onClose={() => setIsReferralTrackingOpen(false)}
+      />
+
+      {/* 10. Doctor Clinical Consultation Modal */}
+      <ConsultationModal
+        isOpen={isConsultationOpen}
+        onClose={() => setIsConsultationOpen(false)}
+        queueItem={selectedQueueItem}
+      />
+
+      {/* 11. Patient Registration Modal (Offline Capable) */}
+      <PatientRegistrationModal
+        isOpen={isRegisterPatientOpen}
+        onClose={() => setIsRegisterPatientOpen(false)}
+      />
+
+      {/* 12. High-Risk Patient Follow-Up Modal */}
+      <HighRiskFollowupModal
+        isOpen={isHighRiskModalOpen}
+        onClose={() => setIsHighRiskModalOpen(false)}
+        patient={selectedHighRiskPatient}
+      />
+
+      {/* 13. 🎯 SIH 19-Stage Demo Mode Modal */}
+      <JudgeScenarioModal
+        isOpen={isScenarioModalOpen}
+        onClose={() => setIsScenarioModalOpen(false)}
+      />
+
+      {/* 14. Why RuralCare? Innovations Modal */}
+      <InnovationsModal
+        isOpen={isInnovationsModalOpen}
+        onClose={() => setIsInnovationsModalOpen(false)}
+      />
+
+      {/* 15. SIH Problem Alignment Modal */}
+      <SihAlignmentModal
+        isOpen={isSihAlignmentModalOpen}
+        onClose={() => setIsSihAlignmentModalOpen(false)}
+      />
+
+      {/* 16. Technical Architecture Modal */}
+      <TechArchitectureModal
+        isOpen={isTechArchitectureModalOpen}
+        onClose={() => setIsTechArchitectureModalOpen(false)}
+      />
+
+      {/* Legacy Modals */}
       <BookDoctorModal
         isOpen={isBookDoctorOpen}
         onClose={() => setIsBookDoctorOpen(false)}
-        onStartMatching={handleStartMatching}
+        onStartMatching={() => {}}
       />
-
-      {/* 5. Nearest Doctor Matching Radar Modal */}
-      <DoctorMatchingModal
-        isOpen={isMatchingOpen}
-        onClose={() => setIsMatchingOpen(false)}
-        patientLat={matchingParams.lat}
-        patientLng={matchingParams.lng}
-        category={matchingParams.category}
-        urgency={matchingParams.urgency}
-        patientId={currentPatient?.id || 'pat-1'}
-        onDoctorAccepted={handleDoctorAccepted}
-      />
-
-      {/* 6. Digital Prescription Modal */}
       <PrescriptionModal
         isOpen={isPrescriptionModalOpen}
         onClose={() => setIsPrescriptionModalOpen(false)}
-        prescription={
-          activePrescription || {
-            id: 'rx-demo-1',
-            visitId: 'visit-1',
-            patientId: 'pat-1',
-            patientName: 'Ramesh Patil',
-            patientAge: 48,
-            patientGender: 'Male',
-            doctorId: 'doc-1',
-            doctorName: 'Dr. Priya Sharma',
-            doctorQualification: 'MBBS, MD (General Medicine)',
-            doctorLicense: 'MMC/2016/08/2341',
-            facilityName: 'RuralCare Connect Mobile Clinic (Shirur PHC Circle)',
-            date: '2026-09-09',
-            vitals: {
-              temperature: '101.4 °F',
-              bloodPressure: '124/82 mmHg',
-              heartRate: '84 bpm',
-              spO2: '98%'
-            },
-            diagnosis: 'Acute Viral Pyrexia (Viral Fever)',
-            medicines: [
-              {
-                name: 'Paracetamol 500mg',
-                dosage: '500 mg',
-                frequency: '1-0-1 (After Food)',
-                duration: '3 Days',
-                instructions: 'Take with warm water for fever'
-              },
-              {
-                name: 'ORS (Oral Rehydration Salts)',
-                dosage: '1 Sachet',
-                frequency: 'As needed (1 Litre water)',
-                duration: '3 Days',
-                instructions: 'Sip throughout the day for hydration'
-              }
-            ],
-            instructions: 'Adequate hydration, bed rest. If fever persists past 48 hours, blood test recommended.',
-            followUpDate: '2026-09-12 (In 3 Days)'
-          }
-        }
+        prescription={activePrescription}
       />
-
-      {/* 7. Doctor Verification Modal */}
-      <DoctorVerificationModal
-        isOpen={isVerificationModalOpen}
-        onClose={() => setIsVerificationModalOpen(false)}
-      />
-
-      {/* 8. Doctor Visit Workflow Modal */}
-      {activeVisitRequest && (
-        <VisitWorkflowModal
-          isOpen={isWorkflowModalOpen}
-          onClose={() => setIsWorkflowModalOpen(false)}
-          visitRequest={activeVisitRequest}
-          onPrescriptionCreated={(rx) => {
-            setActivePrescription(rx);
-            setIsPrescriptionModalOpen(true);
-            addNotification(
-              'Prescription Added',
-              `Prescription for ${activeVisitRequest.patientName} created and archived into ABHA health records.`,
-              'record',
-              'doctor'
-            );
-          }}
-        />
-      )}
     </div>
   );
 };
 
-export const App: React.FC = () => {
+export default function App() {
   return (
-    <AuthProvider>
+    <NetworkProvider>
       <LanguageProvider>
-        <NetworkProvider>
+        <AuthProvider>
           <NotificationProvider>
             <MainApp />
           </NotificationProvider>
-        </NetworkProvider>
+        </AuthProvider>
       </LanguageProvider>
-    </AuthProvider>
+    </NetworkProvider>
   );
-};
-
-export default App;
+}

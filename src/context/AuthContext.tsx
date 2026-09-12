@@ -48,6 +48,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         phone: "+91 98221 44512",
         village: "Karegaon, Shirur"
       });
+    } else if (role === 'health_worker') {
+      setUser({
+        id: "u-asha-1",
+        email: "asha.lakshmi@ruralcare.demo",
+        name: "Lakshmi Devi (ASHA)",
+        role: "health_worker",
+        phone: "+91 94230 88122",
+        village: "Sub-Centre Karegaon"
+      });
     } else if (role === 'doctor') {
       setCurrentDoctor(mockDoctors[0]);
       setUser({
@@ -55,15 +64,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: "doctor@ruralcare.demo",
         name: "Dr. Priya Sharma",
         role: "doctor",
-        phone: "+91 98230 11844"
+        phone: "+91 98230 11844",
+        village: "PHC Karegaon"
       });
-    } else if (role === 'admin') {
+    } else if (role === 'ambulance') {
+      setUser({
+        id: "u-amb-1",
+        email: "driver.rajesh@ems108.gov.in",
+        name: "Rajesh Patil (108 Driver)",
+        role: "ambulance",
+        phone: "+91 98224 55108",
+        village: "108 Base - Shirur Junction"
+      });
+    } else if (role === 'hospital_admin') {
+      setUser({
+        id: "u-hosp-1",
+        email: "ms.shirur@health.gov.in",
+        name: "Dr. Sunita Kulkarni (MS)",
+        role: "hospital_admin",
+        phone: "+91 2138 222144",
+        village: "Shirur Rural Hospital"
+      });
+    } else if (role === 'district_admin' || role === 'admin') {
       setUser({
         id: "u-admin-1",
-        email: "admin@ruralcare.demo",
-        name: "Dr. Rajesh Kadam (DHO)",
-        role: "admin",
-        phone: "+91 20 2605 1400"
+        email: "dho.pune@health.gov.in",
+        name: "Dr. Vilas Rao (DHO)",
+        role: "district_admin",
+        phone: "+91 20 2605 1400",
+        village: "District Health Office, Pune"
       });
     }
   }, [role]);

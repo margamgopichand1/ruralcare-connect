@@ -68,7 +68,7 @@ export interface Translations {
 export const translations: Record<Language, Translations> = {
   en: {
     appName: "RuralCare Connect",
-    tagline: "Bringing the doctor to the doorstep",
+    tagline: "Right Care. Right Place. Right Time.",
     sihTag: "Smart India Hackathon 2026 | PS 26133",
     home: "Home",
     bookDoctor: "Book a Doctor",
@@ -196,7 +196,7 @@ export const translations: Record<Language, Translations> = {
   },
   hi: {
     appName: "रूरलकेयर कनेक्ट",
-    tagline: "डॉक्टर आपके द्वार",
+    tagline: "सही देखभाल। सही जगह। सही समय।",
     sihTag: "स्मार्ट इंडिया हैकाथॉन 2026 | पीएस 26133",
     home: "होम",
     bookDoctor: "डॉक्टर बुक करें",
@@ -260,7 +260,7 @@ export const translations: Record<Language, Translations> = {
   },
   te: {
     appName: "రూరల్ కేర్ కనెక్ట్",
-    tagline: "ఇంటి వద్దకే వైద్యుడు",
+    tagline: "సరైన సంరక్షణ. సరైన స్థలం. సరైన సమయం.",
     sihTag: "స్మార్ట్ ఇండియా హ్యాకథాన్ 2026 | PS 26133",
     home: "హోమ్",
     bookDoctor: "డాక్టర్‌ను బుక్ చేయండి",

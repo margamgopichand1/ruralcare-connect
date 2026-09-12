@@ -7,7 +7,14 @@ import {
   VisitRequest,
   MedicineItem,
   DistrictMetrics,
-  NotificationItem
+  NotificationItem,
+  NearbyProvider,
+  QueueItem,
+  DiagnosticTestItem,
+  DiagnosticBooking,
+  HighRiskPatient,
+  PreArrivalAlert,
+  AuditLogItem
 } from '../types';
 
 export const mockPatients: Patient[] = [
@@ -1043,5 +1050,390 @@ export const mockNotifications: NotificationItem[] = [
     timestamp: "5 min ago",
     read: false,
     type: "sos"
+  },
+  {
+    id: "notif-6",
+    recipientRole: "hospital_admin",
+    title: "🚨 Emergency Pre-Arrival Alert",
+    message: "Incoming 108 ALS Ambulance with suspected cardiac emergency. ETA 12 min. Prepare Resus Bay.",
+    timestamp: "2 min ago",
+    read: false,
+    type: "sos"
   }
 ];
+
+export const mockNearbyProviders: NearbyProvider[] = [
+  {
+    id: "prov-1",
+    name: "Dr. Ravi Kumar",
+    role: "doctor",
+    qualification: "MBBS, DNB (Family Medicine)",
+    specialization: "General Physician",
+    distanceKm: 1.4,
+    etaMinutes: 18,
+    areaServed: "Karegaon & Ranjangaon Rural",
+    services: ["Fever Treatment", "BP & Diabetes Review", "Clinical Diagnosis", "Prescriptions", "Elderly Care"],
+    isAvailable: true,
+    isVerified: true,
+    phone: "+91 98220 11920",
+    avatar: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=300"
+  },
+  {
+    id: "prov-2",
+    name: "Lakshmi Devi",
+    role: "asha",
+    qualification: "Certified ASHA Community Worker (NHM)",
+    specialization: "Frontline Community Health",
+    distanceKm: 0.8,
+    etaMinutes: 10,
+    areaServed: "Karegaon Wards 1 to 4",
+    services: ["Basic Check-up", "Blood Pressure Monitoring", "Maternal ANC Check", "Child Immunization Support", "Medicine Delivery"],
+    isAvailable: true,
+    isVerified: true,
+    phone: "+91 94230 88122",
+    avatar: "https://images.unsplash.com/photo-1594824813627-81c81ef40d47?auto=format&fit=crop&q=80&w=300"
+  },
+  {
+    id: "prov-3",
+    name: "Anitha Nurse",
+    role: "nurse",
+    qualification: "GNM, Registered Nurse & Midwife (MNC)",
+    specialization: "Community Health Nursing / ANM",
+    distanceKm: 2.1,
+    etaMinutes: 22,
+    areaServed: "Karegaon Sub-Centre & Phata",
+    services: ["Vitals Check (BP, SpO2, Temp)", "Injections & IV Fluids", "Wound Dressing", "Postnatal Follow-up", "Elderly Bedside Care"],
+    isAvailable: true,
+    isVerified: true,
+    phone: "+91 94211 55670",
+    avatar: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&q=80&w=300"
+  },
+  {
+    id: "prov-4",
+    name: "Dr. Priya Sharma",
+    role: "doctor",
+    qualification: "MBBS, MD (Internal Medicine)",
+    specialization: "General Medicine & Tele-Specialist",
+    distanceKm: 1.8,
+    etaMinutes: 15,
+    areaServed: "Shirur Taluka",
+    services: ["Teleconsultation", "Prescription", "Secondary Referral", "Infectious Disease Triage"],
+    isAvailable: true,
+    isVerified: true,
+    phone: "+91 98230 11844",
+    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300"
+  }
+];
+
+export const mockQueueItems: QueueItem[] = [
+  {
+    id: "q-1",
+    tokenNumber: "A-021",
+    patientId: "pat-2",
+    patientName: "Anandi Bai Shinde",
+    age: 67,
+    gender: "Female",
+    reason: "Severe dizziness on standing up, history of hypertension",
+    priority: "urgent",
+    status: "in_consultation",
+    estimatedWaitMinutes: 0,
+    arrivedAt: "09:15 AM",
+    updatedByClinicalStaff: true,
+    notes: "Upgraded by Dr. Priya after BP recorded at 178/104 mmHg"
+  },
+  {
+    id: "q-2",
+    tokenNumber: "A-024",
+    patientId: "pat-3",
+    patientName: "Tukaram Gaikwad",
+    age: 54,
+    gender: "Male",
+    reason: "Asthmatic bronchospasm, breathing difficulty with audible wheeze",
+    priority: "critical",
+    status: "waiting",
+    estimatedWaitMinutes: 8,
+    arrivedAt: "09:30 AM",
+    updatedByClinicalStaff: true,
+    notes: "Clinical triage escalated priority over routine tokens"
+  },
+  {
+    id: "q-3",
+    tokenNumber: "A-027",
+    patientId: "pat-1",
+    patientName: "Ramesh Patil",
+    age: 48,
+    gender: "Male",
+    reason: "High fever (102°F), shivering, and acute body aches since yesterday",
+    priority: "normal",
+    status: "waiting",
+    estimatedWaitMinutes: 28,
+    arrivedAt: "09:42 AM",
+    notes: "Routine queue token allocated via mobile kiosk"
+  },
+  {
+    id: "q-4",
+    tokenNumber: "A-029",
+    patientId: "pat-6",
+    patientName: "Suman Deshmukh",
+    age: 72,
+    gender: "Female",
+    reason: "Monthly hypertension prescription refill & routine creatinine check",
+    priority: "normal",
+    status: "waiting",
+    estimatedWaitMinutes: 44,
+    arrivedAt: "09:50 AM",
+    notes: "Scheduled follow-up appointment"
+  },
+  {
+    id: "q-5",
+    tokenNumber: "A-031",
+    patientId: "pat-7",
+    patientName: "Rahul Bhosle",
+    age: 19,
+    gender: "Male",
+    reason: "Minor agricultural scratch dressing renewal",
+    priority: "normal",
+    status: "waiting",
+    estimatedWaitMinutes: 58,
+    arrivedAt: "10:05 AM"
+  }
+];
+
+export const mockPreArrivalAlerts: PreArrivalAlert[] = [
+  {
+    id: "alert-ems-108",
+    hospitalId: "fac-4",
+    hospitalName: "Shirur Rural Hospital (Sub-District Hospital)",
+    ambulanceNumber: "MH-12-RN-4421 (ALS Unit 108)",
+    patientName: "Babanrao Jagtap",
+    patientAge: 56,
+    patientGender: "Male",
+    condition: "Suspected Acute Coronary Syndrome (Severe crushing chest pain, SpO2 91%, diaphoresis)",
+    priority: "critical",
+    etaMinutes: 12,
+    requiredCare: "Emergency Department / Cath Lab / Resus Bay 1",
+    timestamp: "Just now",
+    status: "incoming"
+  }
+];
+
+export const mockDiagnosticTests: DiagnosticTestItem[] = [
+  {
+    id: "diag-1",
+    name: "Complete Blood Count (CBC) with Platelets",
+    category: "Blood Test",
+    description: "Evaluates infection markers, hemoglobin, total leukocyte count (TLC), and platelet count for suspected viral/bacterial infections.",
+    turnaroundTime: "2 Hours",
+    sampleType: "Venous Blood (EDTA)",
+    participatingFacilities: ["PHC Karegaon", "Shirur Rural Hospital", "Aundh District Hospital"]
+  },
+  {
+    id: "diag-2",
+    name: "12-Lead Electrocardiogram (ECG)",
+    category: "Cardiac",
+    description: "Records electrical activity of the heart to rule out myocardial infarction, arrhythmia, and conduction blocks.",
+    turnaroundTime: "Immediate (15 min)",
+    sampleType: "Non-invasive Lead Placement",
+    participatingFacilities: ["PHC Karegaon", "Shirur Rural Hospital", "Aundh District Hospital"]
+  },
+  {
+    id: "diag-3",
+    name: "Chest X-Ray (PA View)",
+    category: "Imaging",
+    description: "Digital radiography to evaluate lungs for pneumonia consolidation, pulmonary tuberculosis, or cardiac enlargement.",
+    turnaroundTime: "1 Hour",
+    sampleType: "Digital Radiography",
+    participatingFacilities: ["Shirur Rural Hospital", "Aundh District Hospital"]
+  },
+  {
+    id: "diag-4",
+    name: "Ultrasound (USG) Abdomen & Pelvis",
+    category: "Imaging",
+    description: "High-resolution sonography for maternal fetal well-being, hepatobiliary evaluation, and renal calculus.",
+    turnaroundTime: "Same Day",
+    sampleType: "Transabdominal Sonography",
+    participatingFacilities: ["Shirur Rural Hospital", "Aundh District Hospital"]
+  },
+  {
+    id: "diag-5",
+    name: "HbA1c (Glycated Hemoglobin)",
+    category: "Blood Test",
+    description: "Assesses average blood glucose levels over the past 3 months for long-term diabetes monitoring.",
+    turnaroundTime: "4 Hours",
+    sampleType: "Whole Blood",
+    participatingFacilities: ["PHC Karegaon", "Shirur Rural Hospital"]
+  },
+  {
+    id: "diag-6",
+    name: "Sputum Smear Examination for AFB",
+    category: "Microbiology",
+    description: "Microscopic test for Mycobacterium tuberculosis under National TB Elimination Programme (NTEP).",
+    turnaroundTime: "24 Hours",
+    sampleType: "Early Morning Sputum",
+    participatingFacilities: ["PHC Karegaon", "Shirur Rural Hospital"]
+  }
+];
+
+export const mockDiagnosticBookings: DiagnosticBooking[] = [
+  {
+    id: "dbook-1",
+    patientId: "pat-1",
+    patientName: "Ramesh Patil",
+    testId: "diag-1",
+    testName: "Complete Blood Count (CBC) with Platelets",
+    facilityId: "fac-1",
+    facilityName: "PHC Karegaon",
+    facilityDistanceKm: 0.8,
+    date: "2026-09-10",
+    slot: "10:30 AM",
+    status: "completed",
+    reportUrl: "/reports/cbc_ramesh_patil.pdf",
+    reportDate: "2026-09-10 (12:45 PM)",
+    findingsSummary: "Hb: 13.8 g/dL (Normal). TLC: 11,400 /uL (Mild Leukocytosis - Bacterial infection marker). Platelets: 2.1 Lakhs. Widal Test: Negative.",
+    reviewedByDoctor: "Dr. Priya Sharma"
+  },
+  {
+    id: "dbook-2",
+    patientId: "pat-1",
+    patientName: "Ramesh Patil",
+    testId: "diag-2",
+    testName: "12-Lead Electrocardiogram (ECG)",
+    facilityId: "fac-1",
+    facilityName: "PHC Karegaon",
+    facilityDistanceKm: 0.8,
+    date: "2026-07-15",
+    slot: "11:00 AM",
+    status: "completed",
+    reportUrl: "/reports/ecg_ramesh_patil.pdf",
+    reportDate: "2026-07-15",
+    findingsSummary: "Sinus rhythm, HR 78 bpm. No acute ST-T segment elevation or depression. Mild left ventricular strain pattern consistent with borderline hypertension.",
+    reviewedByDoctor: "Dr. Priya Sharma"
+  }
+];
+
+export const mockHighRiskPatients: HighRiskPatient[] = [
+  {
+    id: "hr-1",
+    patientId: "pat-4",
+    patientName: "Pooja Jadhav",
+    age: 26,
+    gender: "Female",
+    village: "Manchar",
+    taluka: "Ambegaon",
+    conditionCategory: "maternal",
+    conditionName: "High-Risk Pregnancy (32 Weeks, Severe Anemia Hb 8.1 g/dL)",
+    riskLevel: "critical",
+    lastVisitDate: "2026-08-20",
+    nextFollowUpDate: "2026-09-10",
+    status: "overdue",
+    missedVisitsCount: 1,
+    ashaWorkerAssigned: "Lakshmi Devi (ASHA)",
+    ashaPhone: "+91 94230 88122",
+    patientPhone: "+91 88882 19934",
+    notes: "Requires parenteral Iron Sucrose infusion at CHC Manchar. Transport assistance coordinated."
+  },
+  {
+    id: "hr-2",
+    patientId: "pat-6",
+    patientName: "Suman Deshmukh",
+    age: 72,
+    gender: "Female",
+    village: "Malegaon Khurd",
+    taluka: "Baramati",
+    conditionCategory: "chronic_kidney",
+    conditionName: "CKD Stage 2 with Refractory Hypertension (BP 176/102)",
+    riskLevel: "critical",
+    lastVisitDate: "2026-08-28",
+    nextFollowUpDate: "2026-09-14",
+    status: "due_soon",
+    missedVisitsCount: 0,
+    ashaWorkerAssigned: "Sarita More (ASHA)",
+    ashaPhone: "+91 98210 99401",
+    patientPhone: "+91 91580 44299",
+    notes: "Serum Creatinine monitoring and ACE inhibitor dose titrations scheduled."
+  },
+  {
+    id: "hr-3",
+    patientId: "pat-9",
+    patientName: "Aarav Shinde (Child)",
+    age: 3,
+    gender: "Male",
+    village: "Pabal",
+    taluka: "Shirur",
+    conditionCategory: "child",
+    conditionName: "Severe Acute Malnutrition (SAM) & Missed DPT Booster",
+    riskLevel: "high",
+    lastVisitDate: "2026-08-15",
+    nextFollowUpDate: "2026-09-08",
+    status: "overdue",
+    missedVisitsCount: 2,
+    ashaWorkerAssigned: "Lakshmi Devi (ASHA)",
+    ashaPhone: "+91 94230 88122",
+    patientPhone: "+91 94210 33819",
+    notes: "Home visit for Ready-to-Use Therapeutic Food (RUTF) supply and weight tracking needed."
+  },
+  {
+    id: "hr-4",
+    patientId: "pat-2",
+    patientName: "Anandi Bai Shinde",
+    age: 67,
+    gender: "Female",
+    village: "Pabal",
+    taluka: "Shirur",
+    conditionCategory: "hypertension",
+    conditionName: "Uncontrolled Hypertension with Fall Risk",
+    riskLevel: "high",
+    lastVisitDate: "2026-08-30",
+    nextFollowUpDate: "2026-09-15",
+    status: "due_soon",
+    missedVisitsCount: 0,
+    ashaWorkerAssigned: "Lakshmi Devi (ASHA)",
+    ashaPhone: "+91 94230 88122",
+    patientPhone: "+91 94210 33819",
+    notes: "Home visit scheduled by ANM for bedside BP and mobility assessment."
+  }
+];
+
+export const mockAuditLogs: AuditLogItem[] = [
+  {
+    id: "log-1",
+    timestamp: "2026-09-12 10:14:02",
+    userName: "Dr. Priya Sharma",
+    role: "doctor",
+    action: "PRIORITY_OVERRIDE",
+    resource: "Queue Token A-024 (Tukaram Gaikwad)",
+    facility: "PHC Karegaon",
+    status: "SUCCESS"
+  },
+  {
+    id: "log-2",
+    timestamp: "2026-09-12 09:58:31",
+    userName: "Ramesh Patil",
+    role: "patient",
+    action: "CONSENT_GRANTED_ABHA",
+    resource: "Unified Health Record Sharing",
+    facility: "Patient Mobile Portal",
+    status: "SUCCESS"
+  },
+  {
+    id: "log-3",
+    timestamp: "2026-09-12 09:45:10",
+    userName: "Rajesh Patil (108 Driver)",
+    role: "ambulance",
+    action: "EMERGENCY_STATUS_CHANGE",
+    resource: "Dispatch SOS-8821 -> En Route",
+    facility: "Shirur Highway Sub-station",
+    status: "SUCCESS"
+  },
+  {
+    id: "log-4",
+    timestamp: "2026-09-12 09:12:44",
+    userName: "Lakshmi Devi (ASHA)",
+    role: "health_worker",
+    action: "OFFLINE_SYNC_COMMITTED",
+    resource: "4 Field Registrations Synced",
+    facility: "Karegaon Sub-Centre",
+    status: "SUCCESS"
+  }
+];
+

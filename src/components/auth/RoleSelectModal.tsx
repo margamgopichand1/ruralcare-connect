@@ -1,7 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types';
-import { User, Stethoscope, Landmark, ArrowRight, ShieldCheck, Key, CheckCircle } from 'lucide-react';
+import {
+  User,
+  HeartHandshake,
+  Stethoscope,
+  Ambulance,
+  Building2,
+  Landmark,
+  ShieldCheck,
+  CheckCircle,
+  Zap,
+  ArrowRight
+} from 'lucide-react';
 
 interface RoleSelectModalProps {
   isOpen: boolean;
@@ -9,51 +20,100 @@ interface RoleSelectModalProps {
   onRoleSelected: (role: UserRole) => void;
 }
 
+interface RoleConfig {
+  role: UserRole;
+  title: string;
+  name: string;
+  sub: string;
+  icon: any;
+  color: string;
+  badge: string;
+  features: string[];
+}
+
+const ROLES_LIST: RoleConfig[] = [
+  {
+    role: 'patient',
+    title: 'Patient',
+    name: 'Ramesh Patil',
+    sub: 'Karegaon Village (Shirur)',
+    icon: User,
+    color: 'bg-blue-50 text-blue-700 border-blue-200',
+    badge: 'Patient Portal',
+    features: ['Care Near Me & Home Visit', 'Digital Queue Token', '108 Emergency SOS', 'ABHA Longitudinal Record']
+  },
+  {
+    role: 'health_worker',
+    title: 'ASHA / ANM Worker',
+    name: 'Lakshmi Devi',
+    sub: 'Sub-Centre Karegaon',
+    icon: HeartHandshake,
+    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    badge: 'Frontline Worker',
+    features: ['Village Patient Registry', 'Digital Symptom Triage', 'High-Risk Follow-up', 'Offline Record Sync']
+  },
+  {
+    role: 'doctor',
+    title: 'Doctor',
+    name: 'Dr. Priya Sharma',
+    sub: 'PHC Medical Officer / Specialist',
+    icon: Stethoscope,
+    color: 'bg-teal-50 text-teal-700 border-teal-200',
+    badge: 'Physician Console',
+    features: ['Dynamic Clinical Queue', 'Consultation & Rx Builder', 'Diagnostic Ordering', 'Secondary Referrals']
+  },
+  {
+    role: 'ambulance',
+    title: 'Ambulance Driver',
+    name: 'Rajesh Patil',
+    sub: '108 ALS Unit MH-12-RN-4421',
+    icon: Ambulance,
+    color: 'bg-red-50 text-red-700 border-red-200',
+    badge: 'Emergency EMS',
+    features: ['Real-time Emergency Dispatch', 'Hospital Capability Match', 'Turn-by-turn Route Map', 'Status Progression Tracking']
+  },
+  {
+    role: 'hospital_admin',
+    title: 'Hospital Administrator',
+    name: 'Dr. Sunita Kulkarni',
+    sub: 'Shirur Rural Hospital (Sub-District)',
+    icon: Building2,
+    color: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    badge: 'Facility Command',
+    features: ['Pre-Arrival Emergency Alerts', 'Bed & ICU Availability', 'OPD Queue Load', 'Medicine & Lab Stock']
+  },
+  {
+    role: 'district_admin',
+    title: 'District Health Admin',
+    name: 'Dr. Vilas Rao',
+    sub: 'District Health Officer (Pune)',
+    icon: Landmark,
+    color: 'bg-purple-50 text-purple-700 border-purple-200',
+    badge: 'Public Health DHO',
+    features: ['GIS Facility Heatmap', 'Referral Completion Trends', 'Medicine Shortage Alerts', 'Quality & Workload Metrics']
+  }
+];
+
 export const RoleSelectModal: React.FC<RoleSelectModalProps> = ({
   isOpen,
   onClose,
   onRoleSelected
 }) => {
-  const { switchRole, quickDemoLogin, role: currentRole } = useAuth();
-  const [selectedRole, setSelectedRole] = useState<UserRole>(currentRole || 'patient');
-  const [isCustomLogin, setIsCustomLogin] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { quickDemoLogin, role: currentRole } = useAuth();
 
   if (!isOpen) return null;
 
-  const handleSelectRole = (r: UserRole) => {
-    setSelectedRole(r);
-    if (r === 'patient') {
-      setEmail('patient@ruralcare.demo');
-      setPassword('patient123');
-    } else if (r === 'doctor') {
-      setEmail('doctor@ruralcare.demo');
-      setPassword('doctor123');
-    } else {
-      setEmail('admin@ruralcare.demo');
-      setPassword('admin123');
-    }
-  };
-
-  const handleQuickDemo = (r: UserRole) => {
-    quickDemoLogin(r);
-    onRoleSelected(r);
-    onClose();
-  };
-
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    quickDemoLogin(selectedRole);
-    onRoleSelected(selectedRole);
+  const handleSelectRole = (chosenRole: UserRole) => {
+    quickDemoLogin(chosenRole);
+    onRoleSelected(chosenRole);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-4xl w-full overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
-        <div className="bg-gradient-to-r from-health-700 to-health-900 p-6 text-white text-center relative">
+        <div className="bg-gradient-to-r from-teal-800 via-emerald-800 to-slate-900 p-6 text-white text-center relative shrink-0">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-white/80 hover:text-white text-xl font-bold p-1 rounded-lg hover:bg-white/10 transition"
@@ -62,193 +122,100 @@ export const RoleSelectModal: React.FC<RoleSelectModalProps> = ({
           </button>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-xs font-semibold mb-2">
             <ShieldCheck className="w-4 h-4 text-emerald-300" />
-            <span>Role-Based Prototype Authentication</span>
+            <span>SIH 2026 Presentation • Role-Based Healthcare Access</span>
           </div>
-          <h2 className="text-2xl font-black tracking-tight">How would you like to continue?</h2>
-          <p className="text-emerald-100 text-sm mt-1">
-            Choose a stakeholder persona to experience the platform from their perspective.
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight">Select Stakeholder Persona</h2>
+          <p className="text-emerald-100 text-xs sm:text-sm mt-1 max-w-2xl mx-auto">
+            Experience the complete integrated rural healthcare continuum across all 6 core public health roles.
           </p>
         </div>
 
-        {/* Role Selection Cards */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {/* PATIENT CARD */}
-            <div
-              onClick={() => handleSelectRole('patient')}
-              className={`p-4 rounded-xl border-2 transition-all cursor-pointer relative flex flex-col justify-between ${
-                selectedRole === 'patient'
-                  ? 'border-health-600 bg-health-50/70 shadow-md ring-2 ring-health-500/20'
-                  : 'border-slate-200 hover:border-slate-300 bg-white'
-              }`}
-            >
-              {selectedRole === 'patient' && (
-                <CheckCircle className="absolute top-3 right-3 w-5 h-5 text-health-600" />
-              )}
-              <div>
-                <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold mb-3">
-                  <User className="w-5 h-5" />
-                </div>
-                <h3 className="font-extrabold text-slate-900 text-base">PATIENT</h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Ramesh Patil (Karegaon)
-                </p>
-                <ul className="mt-3 space-y-1 text-xs text-slate-600">
-                  <li>• Book a doctor</li>
-                  <li>• Track live visits</li>
-                  <li>• View medical history</li>
-                  <li>• Get prescriptions</li>
-                </ul>
-              </div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleQuickDemo('patient');
-                }}
-                className="mt-4 w-full py-1.5 px-2 bg-health-600 hover:bg-health-700 text-white rounded-lg text-xs font-bold transition shadow-sm"
-              >
-                1-Click Demo Login
-              </button>
-            </div>
-
-            {/* DOCTOR CARD */}
-            <div
-              onClick={() => handleSelectRole('doctor')}
-              className={`p-4 rounded-xl border-2 transition-all cursor-pointer relative flex flex-col justify-between ${
-                selectedRole === 'doctor'
-                  ? 'border-health-600 bg-health-50/70 shadow-md ring-2 ring-health-500/20'
-                  : 'border-slate-200 hover:border-slate-300 bg-white'
-              }`}
-            >
-              {selectedRole === 'doctor' && (
-                <CheckCircle className="absolute top-3 right-3 w-5 h-5 text-health-600" />
-              )}
-              <div>
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold mb-3">
-                  <Stethoscope className="w-5 h-5" />
-                </div>
-                <h3 className="font-extrabold text-slate-900 text-base">DOCTOR</h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Dr. Priya Sharma (MBBS, MD)
-                </p>
-                <ul className="mt-3 space-y-1 text-xs text-slate-600">
-                  <li>• Receive visit requests</li>
-                  <li>• Manage availability</li>
-                  <li>• Navigate to patients</li>
-                  <li>• Create prescriptions</li>
-                </ul>
-              </div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleQuickDemo('doctor');
-                }}
-                className="mt-4 w-full py-1.5 px-2 bg-health-600 hover:bg-health-700 text-white rounded-lg text-xs font-bold transition shadow-sm"
-              >
-                1-Click Demo Login
-              </button>
-            </div>
-
-            {/* ADMIN CARD */}
-            <div
-              onClick={() => handleSelectRole('admin')}
-              className={`p-4 rounded-xl border-2 transition-all cursor-pointer relative flex flex-col justify-between ${
-                selectedRole === 'admin'
-                  ? 'border-health-600 bg-health-50/70 shadow-md ring-2 ring-health-500/20'
-                  : 'border-slate-200 hover:border-slate-300 bg-white'
-              }`}
-            >
-              {selectedRole === 'admin' && (
-                <CheckCircle className="absolute top-3 right-3 w-5 h-5 text-health-600" />
-              )}
-              <div>
-                <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold mb-3">
-                  <Landmark className="w-5 h-5" />
-                </div>
-                <h3 className="font-extrabold text-slate-900 text-base">GOVT ADMIN</h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  District Health Officer (Pune)
-                </p>
-                <ul className="mt-3 space-y-1 text-xs text-slate-600">
-                  <li>• Monitor district health</li>
-                  <li>• View doctor utilization</li>
-                  <li>• Monitor coverage gaps</li>
-                  <li>• Disease outbreak trends</li>
-                </ul>
-              </div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleQuickDemo('admin');
-                }}
-                className="mt-4 w-full py-1.5 px-2 bg-health-600 hover:bg-health-700 text-white rounded-lg text-xs font-bold transition shadow-sm"
-              >
-                1-Click Demo Login
-              </button>
-            </div>
+        {/* 6 Role Cards Grid */}
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Quick 1-Click Demo Logins for Judges & Evaluators
+            </span>
+            <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              ⚡ Instant Switching
+            </span>
           </div>
 
-          {/* Credentials Preview or Form */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Key className="w-3.5 h-3.5 text-slate-500" />
-                Demo Credentials ({selectedRole})
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsCustomLogin(!isCustomLogin)}
-                className="text-xs font-semibold text-health-700 hover:underline"
-              >
-                {isCustomLogin ? 'Use standard demo accounts' : 'Edit credentials'}
-              </button>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {ROLES_LIST.map((r) => {
+              const IconComp = r.icon;
+              const isSelected = currentRole === r.role || (r.role === 'district_admin' && currentRole === 'admin');
 
-            {isCustomLogin ? (
-              <form onSubmit={handleLoginSubmit} className="space-y-3 mt-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-health-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Password</label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-health-500 focus:outline-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full py-2 bg-health-700 hover:bg-health-800 text-white font-bold rounded-lg text-sm transition shadow-sm"
+              return (
+                <div
+                  key={r.role}
+                  onClick={() => handleSelectRole(r.role)}
+                  className={`p-4 rounded-2xl border-2 transition-all cursor-pointer relative flex flex-col justify-between hover:shadow-lg hover:-translate-y-0.5 ${
+                    isSelected
+                      ? 'border-emerald-600 bg-emerald-50/60 ring-2 ring-emerald-500/20 shadow-md'
+                      : 'border-slate-200 hover:border-teal-400 bg-white'
+                  }`}
                 >
-                  Sign In as {selectedRole.toUpperCase()}
-                </button>
-              </form>
-            ) : (
-              <div className="text-xs font-mono text-slate-600 space-y-1">
-                <div>Email: <span className="font-bold text-slate-900">{selectedRole}@ruralcare.demo</span></div>
-                <div>Password: <span className="font-bold text-slate-900">{selectedRole}123</span></div>
-                <div className="pt-2 flex justify-end">
+                  {isSelected && (
+                    <span className="absolute top-3 right-3 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" /> Active
+                    </span>
+                  )}
+
+                  <div>
+                    <div className="flex items-center gap-2.5 mb-2.5">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shrink-0 border ${r.color}`}>
+                        <IconComp className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                          {r.badge}
+                        </div>
+                        <h3 className="font-black text-slate-900 text-sm sm:text-base leading-tight">
+                          {r.title}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100 mb-3">
+                      <div className="text-xs font-extrabold text-slate-800">{r.name}</div>
+                      <div className="text-[11px] text-slate-500">{r.sub}</div>
+                    </div>
+
+                    <ul className="space-y-1 text-[11px] text-slate-600 mb-4">
+                      {r.features.map((feat, idx) => (
+                        <li key={idx} className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
                   <button
-                    onClick={() => handleQuickDemo(selectedRole)}
-                    className="px-4 py-1.5 bg-health-700 hover:bg-health-800 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 shadow-sm transition"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectRole(r.role);
+                    }}
+                    className={`w-full py-2 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition ${
+                      isSelected
+                        ? 'bg-emerald-700 text-white shadow-md'
+                        : 'bg-slate-900 hover:bg-teal-700 text-white'
+                    }`}
                   >
-                    Enter as {selectedRole.toUpperCase()} <ArrowRight className="w-3.5 h-3.5" />
+                    <Zap className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Enter as {r.title.split(' ')[0]} Demo</span>
+                    <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
                   </button>
                 </div>
-              </div>
-            )}
+              );
+            })}
           </div>
+        </div>
+
+        {/* Footer info note */}
+        <div className="p-3.5 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500 shrink-0">
+          Realistic Indian rural health data simulation for SIH 2026. Data is fictitious and compliant with public health scope of practice guidelines.
         </div>
       </div>
     </div>
