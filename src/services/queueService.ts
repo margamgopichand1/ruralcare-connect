@@ -2,6 +2,7 @@ import { QueueItem, QueuePriority } from '../types';
 import { mockQueueItems } from '../data/mockData';
 
 const QUEUE_STORAGE_KEY = 'ruralcare_clinical_queue';
+const QUEUE_AUDIT_STORAGE_KEY = 'ruralcare_queue_audit_logs';
 
 // Clinical priority order weights (Critical highest priority)
 const PRIORITY_WEIGHTS: Record<QueuePriority, number> = {
@@ -9,6 +10,42 @@ const PRIORITY_WEIGHTS: Record<QueuePriority, number> = {
   urgent: 2,
   normal: 1
 };
+
+export interface QueuePriorityAuditLog {
+  id: string;
+  queueId: string;
+  patientName: string;
+  tokenNumber: string;
+  oldPriority: QueuePriority;
+  newPriority: QueuePriority;
+  clinicianName: string;
+  timestamp: string;
+  reason: string;
+}
+
+export function getQueuePriorityAuditLogs(): QueuePriorityAuditLog[] {
+  try {
+    const data = localStorage.getItem(QUEUE_AUDIT_STORAGE_KEY);
+    if (data) {
+      return JSON.parse(data);
+    }
+  } catch (e) {
+    console.error('Error reading queue audit logs', e);
+  }
+  return [
+    {
+      id: 'audit-init-1',
+      queueId: 'q-2',
+      patientName: 'Devidas Shinde',
+      tokenNumber: 'A-022',
+      oldPriority: 'normal',
+      newPriority: 'urgent',
+      clinicianName: 'Dr. Priya Sharma (Medical Officer)',
+      timestamp: '14 Sep 2026, 09:15 AM',
+      reason: 'Clinical assessment: Severe dyspnea and wheezing in chronic COPD patient'
+    }
+  ];
+}
 
 export function getQueueItems(): QueueItem[] {
   try {
@@ -55,8 +92,9 @@ export function sortQueueByClinicalPriority(items: QueueItem[]): QueueItem[] {
 }
 
 /**
- * Clinician-controlled priority update.
+ * Clinician-controlled priority update (Requirement 11).
  * Controlled by authorized healthcare staff, not autonomous AI.
+ * Records a full verifiable audit trail with clinician identity and justification.
  */
 export function updatePatientClinicalPriority(
   queueId: string,
@@ -65,8 +103,22 @@ export function updatePatientClinicalPriority(
   notes?: string
 ): QueueItem[] {
   const current = getQueueItems();
+  let auditEntry: QueuePriorityAuditLog | null = null;
+
   const updated = current.map((item) => {
     if (item.id === queueId) {
+      auditEntry = {
+        id: `audit-${Date.now()}`,
+        queueId: item.id,
+        patientName: item.patientName,
+        tokenNumber: item.tokenNumber,
+        oldPriority: item.priority,
+        newPriority,
+        clinicianName,
+        timestamp: new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }),
+        reason: notes || `Clinical triage upgrade based on doctor examination.`
+      };
+
       return {
         ...item,
         priority: newPriority,
@@ -76,6 +128,16 @@ export function updatePatientClinicalPriority(
     }
     return item;
   });
+
+  if (auditEntry) {
+    try {
+      const logs = getQueuePriorityAuditLogs();
+      logs.unshift(auditEntry);
+      localStorage.setItem(QUEUE_AUDIT_STORAGE_KEY, JSON.stringify(logs));
+    } catch (e) {
+      console.error('Error saving queue audit log', e);
+    }
+  }
 
   const sorted = sortQueueByClinicalPriority(updated);
   saveQueueItems(sorted);

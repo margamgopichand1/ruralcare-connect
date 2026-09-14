@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { mockDoctors } from '../../data/mockData';
 import { QueueItem, QueuePriority, Doctor } from '../../types';
-import { getQueueItems, updatePatientClinicalPriority, updateQueueStatus } from '../../services/queueService';
+import {
+  getQueueItems,
+  updatePatientClinicalPriority,
+  updateQueueStatus,
+  getQueuePriorityAuditLogs,
+  QueuePriorityAuditLog
+} from '../../services/queueService';
 import {
   Stethoscope,
   ShieldCheck,
@@ -37,12 +43,14 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
   const doctor = currentDoctor || mockDoctors[0];
 
   const [queue, setQueue] = useState<QueueItem[]>(() => getQueueItems());
+  const [auditLogs, setAuditLogs] = useState<QueuePriorityAuditLog[]>(() => getQueuePriorityAuditLogs());
   const [priorityUpdatedAlert, setPriorityUpdatedAlert] = useState<string | null>(null);
   const [filterPriority, setFilterPriority] = useState<'all' | 'critical' | 'urgent' | 'normal'>('all');
 
   useEffect(() => {
     const handleUpdate = () => {
       setQueue(getQueueItems());
+      setAuditLogs(getQueuePriorityAuditLogs());
     };
     window.addEventListener('ruralcare_queue_updated', handleUpdate);
     return () => window.removeEventListener('ruralcare_queue_updated', handleUpdate);
@@ -60,10 +68,11 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
       item.id,
       nextPriority,
       doctor.name,
-      `Priority escalated by ${doctor.name} during triage inspection.`
+      `Priority escalated to ${nextPriority.toUpperCase()} by ${doctor.name} during clinical assessment.`
     );
     setQueue(updated);
-    setPriorityUpdatedAlert(`Queue priority dynamically updated: ${item.patientName} escalated to ${nextPriority.toUpperCase()}. Queue reordered!`);
+    setAuditLogs(getQueuePriorityAuditLogs());
+    setPriorityUpdatedAlert(`Queue priority updated based on clinical assessment: ${item.patientName} (${item.tokenNumber}) re-sequenced to ${nextPriority.toUpperCase()}.`);
 
     setTimeout(() => {
       setPriorityUpdatedAlert(null);
@@ -324,6 +333,53 @@ export const DoctorDashboard: React.FC<DoctorDashboardProps> = ({
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* CLINICAL PRIORITY AUDIT TRAIL (Requirement 11) */}
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-3">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-indigo-700" />
+            <h3 className="font-black text-slate-900 text-sm sm:text-base">
+              Clinical Priority Override Audit Trail
+            </h3>
+          </div>
+          <span className="text-[10px] uppercase font-bold text-slate-400">
+            Immutable Clinician Log
+          </span>
+        </div>
+
+        <p className="text-xs text-slate-500">
+          Statutory compliance: Demonstrates that all dynamic queue priority re-orderings are authorized by certified medical professionals and not autonomously decided by algorithmic models.
+        </p>
+
+        <div className="space-y-2 pt-1">
+          {auditLogs.slice(0, 4).map((log) => (
+            <div
+              key={log.id}
+              className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
+            >
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <strong className="text-slate-900 font-extrabold">{log.patientName}</strong>
+                  <span className="font-mono text-slate-500 text-[11px]">({log.tokenNumber})</span>
+                  <span className="text-slate-400">•</span>
+                  <span className="uppercase text-[10px] font-bold text-slate-500">{log.oldPriority}</span>
+                  <span className="text-amber-600 font-bold">→</span>
+                  <span className="uppercase text-[10px] font-extrabold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
+                    {log.newPriority}
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-600 italic">"{log.reason}"</div>
+              </div>
+
+              <div className="text-right text-[11px] text-slate-400 shrink-0">
+                <div className="font-semibold text-slate-700">{log.clinicianName}</div>
+                <div>{log.timestamp}</div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

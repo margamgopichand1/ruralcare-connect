@@ -173,9 +173,16 @@ export const MedicalRecordsView: React.FC<MedicalRecordsViewProps> = ({
                     <span className="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
                       {record.date}
                     </span>
-                    <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-health-50 text-health-800 border border-health-200">
-                      {record.type.replace('_', ' ')}
-                    </span>
+                    {record.title.includes('Emergency') || record.title.includes('🚨') ? (
+                      <span className="text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-red-600 text-white shadow-sm flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        108 Emergency Incident
+                      </span>
+                    ) : (
+                      <span className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-health-50 text-health-800 border border-health-200">
+                        {record.type.replace('_', ' ')}
+                      </span>
+                    )}
                   </div>
 
                   <div className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
@@ -188,14 +195,25 @@ export const MedicalRecordsView: React.FC<MedicalRecordsViewProps> = ({
                   <h3 className="text-base font-extrabold text-slate-900">
                     {record.title}
                   </h3>
-                  <p className="text-xs font-medium text-emerald-800 mt-0.5">
-                    Attending Provider: {record.providerName}
-                  </p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p className="text-xs font-medium text-emerald-800">
+                      Attending Provider: {record.providerName}
+                    </p>
+                    {(record.title.includes('Emergency') || record.title.includes('🚨')) && (
+                      <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200 font-medium">
+                        Clinically Documented by Physician (Not AI)
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {record.diagnosis && (
-                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                    <span className="font-bold text-slate-700 block mb-0.5">Diagnosis:</span>
+                  <div className={`p-3 rounded-xl border text-xs ${
+                    record.title.includes('Emergency') || record.title.includes('🚨')
+                      ? 'bg-red-50/70 border-red-200'
+                      : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <span className="font-bold text-slate-700 block mb-0.5">Diagnosis / Clinical Impression:</span>
                     <span className="font-extrabold text-slate-900 text-sm">{record.diagnosis}</span>
                   </div>
                 )}

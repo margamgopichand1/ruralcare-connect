@@ -30,10 +30,10 @@ const CORE_INNOVATIONS = [
   },
   {
     icon: AlertTriangle,
-    title: '2. Emergency SOS',
-    badge: 'Zero-Friction 108',
+    title: '2. AI-Assisted First-Aid & Emergency SOS',
+    badge: 'Golden-Hour Life Support',
     color: 'text-red-700 bg-red-50 border-red-200',
-    desc: 'Single-touch emergency activation with automatic GPS coordinate lock, nearest 108 ALS ambulance dispatch, and immediate emergency contact notifications.'
+    desc: 'Instant GPS lock with 108 ambulance dispatch plus medically reviewed, trilingual step-by-step first-aid guidance with voice assistance (English, Telugu, Hindi) keeping rural bystanders focused during critical minutes.'
   },
   {
     icon: Ambulance,

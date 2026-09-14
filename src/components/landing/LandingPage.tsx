@@ -5,6 +5,7 @@ import {
   HeartPulse,
   Stethoscope,
   Ambulance,
+  AlertTriangle,
   FileCheck2,
   PhoneCall,
   WifiOff,
@@ -180,6 +181,67 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* EMERGENCY INTELLIGENCE SHOWCASE (Requirement 23 & 35) */}
+      <section className="py-14 bg-gradient-to-b from-slate-900 to-slate-950 text-white border-y border-red-900/40 relative overflow-hidden">
+        <div className="absolute inset-0 bg-red-950/15 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-8">
+          <div className="text-center max-w-3xl mx-auto space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/30 text-red-300 text-xs font-black uppercase border border-red-500/40">
+              <AlertTriangle className="w-4 h-4 text-red-400" />
+              <span>AI-Assisted Emergency First-Aid & SOS Intelligence</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+              The Critical Golden-Hour Pipeline
+            </h2>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Bridging the critical gap between an emergency occurring in a rural household and professional medical help arriving. Protocol-guided bystander first-aid, voice interaction, ambulance telemetry, and zero-minute hospital trauma preparation.
+            </p>
+          </div>
+
+          {/* 10-Step Sequential Visual Flow (Requirement 23) */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 text-center text-xs">
+            {[
+              { step: '1', title: '108 SOS', icon: '🚨', desc: 'Doorstep GPS lock' },
+              { step: '2', title: 'Assessment', icon: '🧠', desc: 'Urgency triage' },
+              { step: '3', title: 'AI First-Aid', icon: '🩺', desc: 'Card-by-card protocol' },
+              { step: '4', title: 'Ambulance', icon: '🚑', desc: 'Nearest 108 ALS' },
+              { step: '5', title: 'Smart Match', icon: '🏥', desc: 'Capability routing' },
+              { step: '6', title: 'Navigation', icon: '🗺️', desc: 'Telemetry guidance' },
+              { step: '7', title: 'Pre-Alert', icon: '📢', desc: 'Trauma bay prepped' },
+              { step: '8', title: 'Dynamic Queue', icon: '⚡', desc: 'Clinician override' },
+              { step: '9', title: 'Treatment', icon: '👨‍⚕️', desc: 'Resuscitation & care' },
+              { step: '10', title: 'Follow-up', icon: '🔄', desc: 'ASHA loop closed' }
+            ].map((st) => (
+              <div
+                key={st.step}
+                className="bg-slate-800/80 p-3 rounded-2xl border border-slate-700/80 hover:border-red-500/60 transition flex flex-col items-center justify-between gap-1.5 shadow-sm"
+              >
+                <div className="text-xl">{st.icon}</div>
+                <div className="font-extrabold text-white text-[11px] leading-tight">{st.title}</div>
+                <div className="text-[9px] text-slate-400">{st.desc}</div>
+                <span className="text-[9px] font-mono text-red-400 font-bold">Step {st.step}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Statutory Note & Action Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-slate-950/80 rounded-2xl border border-red-900/50 text-xs">
+            <div className="text-slate-400 text-xs">
+              <strong className="text-red-400">Clinical Governance Note: </strong>
+              AI provides assistance and communication support. Clinical decisions and emergency treatment remain under qualified healthcare professionals.
+            </div>
+
+            <button
+              onClick={onOpenSos}
+              className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-red-600/40 transition flex items-center gap-1.5 shrink-0"
+            >
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>Launch Emergency 108 Demo</span>
+            </button>
           </div>
         </div>
       </section>

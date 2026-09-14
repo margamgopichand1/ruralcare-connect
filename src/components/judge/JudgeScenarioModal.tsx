@@ -89,13 +89,13 @@ const SCENARIO_STEPS: ScenarioStep[] = [
   },
   {
     number: 6,
-    title: '🚨 108 SOS Activated',
-    actor: 'Ramesh Patil (Patient)',
-    roleBadge: '108 EMS',
+    title: '🚨 108 SOS & AI First-Aid Activated',
+    actor: 'Ramesh Patil & Bystander',
+    roleBadge: '108 EMS & AI',
     badgeColor: 'bg-red-600',
-    description: '1-touch SOS confirmation sends automated GPS coordinates and ABHA medical ID to State 108 Command.',
-    systemAction: 'Generates telemetry dispatch ticket #SOS-8821.',
-    impactNote: 'Instant GPS lock without verbal address confusion.'
+    description: '1-touch SOS confirmation sends automated GPS coordinates to 108 Command and immediately opens AI-Assisted First-Aid Mode providing step-by-step guidance in English, Telugu, or Hindi.',
+    systemAction: 'Generates dispatch ticket #SOS-8821 and begins verified protocol-based cardiac assistance with voice interaction.',
+    impactNote: 'Instant GPS lock + life-saving bystander guidance during golden hour.'
   },
   {
     number: 7,

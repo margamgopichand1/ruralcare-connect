@@ -367,15 +367,40 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
               </span>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-1 text-xs">
-              <div className="font-extrabold text-slate-800">
-                Hypertension & Fasting Sugar Follow-up
+            <div className="space-y-2">
+              {/* Emergency Post-Stabilization Follow-up */}
+              <div className="p-3 bg-red-50/80 rounded-2xl border border-red-200 space-y-1 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-red-900 flex items-center gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
+                    ⚠️ Post-Emergency Follow-up Due
+                  </span>
+                  <span className="text-[10px] font-black text-red-700 uppercase bg-white px-2 py-0.5 rounded border border-red-200">
+                    High Priority
+                  </span>
+                </div>
+                <div className="text-slate-700 font-medium">
+                  Post-Emergency Cardiac / Trauma Monitoring & Vitals
+                </div>
+                <div className="text-slate-500">
+                  Scheduled with: Dr. Priya Sharma & ASHA Lakshmi Devi
+                </div>
+                <div className="text-[11px] text-red-700 font-bold flex items-center gap-1 pt-0.5">
+                  <Clock className="w-3.5 h-3.5" /> Tomorrow, 10:00 AM • "Your healthcare follow-up is due."
+                </div>
               </div>
-              <div className="text-slate-500">
-                Scheduled with: Dr. Priya Sharma • PHC Karegaon
-              </div>
-              <div className="text-[11px] text-emerald-700 font-bold flex items-center gap-1 pt-1">
-                <Calendar className="w-3.5 h-3.5" /> Due Date: 16 Sept 2026 (In 4 Days)
+
+              {/* Routine Chronic Follow-up */}
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-1 text-xs">
+                <div className="font-extrabold text-slate-800">
+                  Hypertension & Fasting Sugar Follow-up
+                </div>
+                <div className="text-slate-500">
+                  Scheduled with: Dr. Priya Sharma • PHC Karegaon
+                </div>
+                <div className="text-[11px] text-emerald-700 font-bold flex items-center gap-1 pt-1">
+                  <Calendar className="w-3.5 h-3.5" /> Due Date: 16 Sept 2026 (In 2 Days)
+                </div>
               </div>
             </div>
           </div>

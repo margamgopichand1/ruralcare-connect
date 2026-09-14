@@ -115,7 +115,7 @@ export const HospitalAdminDashboard: React.FC = () => {
                 {/* Patient Condition & Required Care */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                   <div className="bg-slate-950/50 p-3 rounded-xl border border-red-800/40 space-y-1">
-                    <span className="text-[10px] text-red-300 uppercase font-bold block">Patient</span>
+                    <span className="text-[10px] text-red-300 uppercase font-bold block">Patient ID: RC-10245</span>
                     <strong className="text-sm font-bold text-white block">{alert.patientName} ({alert.patientAge}y, {alert.patientGender})</strong>
                   </div>
 
@@ -134,7 +134,7 @@ export const HospitalAdminDashboard: React.FC = () => {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
                   <span className="text-xs text-red-200/90 font-medium">
                     {isAck
-                      ? '✓ Resuscitation Bay 1 Prepped & On-Duty Emergency Team Notified'
+                      ? '✓ Emergency Resuscitation Bay Prepped & Trauma Team Notified'
                       : 'Prepare Emergency Resuscitation Bay & Trauma Team immediately.'}
                   </span>
 
@@ -147,7 +147,7 @@ export const HospitalAdminDashboard: React.FC = () => {
                     }`}
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>{isAck ? 'Pre-Arrival Alert Acknowledged ✓' : 'Acknowledge & Prepare Resus Bay'}</span>
+                    <span>{isAck ? 'Emergency Department Prepared ✓' : 'Prepare Emergency Department'}</span>
                   </button>
                 </div>
               </div>

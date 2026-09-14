@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { mockHighRiskPatients, mockNearbyProviders } from '../../data/mockData';
 import { HighRiskPatient } from '../../types';
+import { getActiveEmergency, EmergencyDispatchResult } from '../../services/emergencyService';
+import { FIRST_AID_PROTOCOLS } from '../../data/firstAidProtocols';
 import {
   HeartHandshake,
   Users,
@@ -46,6 +48,19 @@ export const HealthWorkerDashboard: React.FC<HealthWorkerDashboardProps> = ({
   const { user } = useAuth();
   const [highRiskList, setHighRiskList] = useState<HighRiskPatient[]>(mockHighRiskPatients);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [activeEmergency, setActiveEmergency] = useState<EmergencyDispatchResult | null>(() => getActiveEmergency());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setActiveEmergency(getActiveEmergency());
+    };
+    window.addEventListener('ruralcare_active_emergency_updated', handleUpdate);
+    window.addEventListener('ruralcare_emergency_completed', handleUpdate);
+    return () => {
+      window.removeEventListener('ruralcare_active_emergency_updated', handleUpdate);
+      window.removeEventListener('ruralcare_emergency_completed', handleUpdate);
+    };
+  }, []);
 
   const filteredHighRisk = highRiskList.filter((p) => {
     if (selectedCategory !== 'all' && p.conditionCategory !== selectedCategory) return false;
@@ -82,6 +97,50 @@ export const HealthWorkerDashboard: React.FC<HealthWorkerDashboardProps> = ({
           <span>Register New Patient (Offline Capable)</span>
         </button>
       </div>
+
+      {/* 🚨 VILLAGE EMERGENCY NOTIFICATION (Requirement 16) */}
+      {activeEmergency && (
+        <div className="bg-gradient-to-r from-red-900 via-rose-950 to-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-xl border-2 border-red-500 space-y-3 animate-fadeIn">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-red-800 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white font-black animate-pulse">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase tracking-widest text-red-300 font-black block">
+                  🚨 Village Emergency Nearby • 1.4 km
+                </span>
+                <h3 className="text-base sm:text-lg font-black text-white">
+                  {activeEmergency.request.patientName} — {FIRST_AID_PROTOCOLS[activeEmergency.categoryKey]?.name.en || 'Emergency Triage'}
+                </h3>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs bg-red-600 text-white font-bold px-3 py-1 rounded-full">
+                Ambulance {activeEmergency.ambulance.vehicleNumber} Dispatched
+              </span>
+            </div>
+          </div>
+
+          <div className="text-xs text-red-100 leading-relaxed">
+            <strong>Community Health Worker Protocol:</strong> Contact family to confirm doorway road accessibility for 108 ambulance. Reassure relatives and assist with basic bystander safety. <em>Reminder: Do not perform invasive procedures outside community health worker authorized scope of practice.</em>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <a
+              href={`tel:${activeEmergency.request.phone}`}
+              className="px-4 py-2 bg-white hover:bg-red-50 text-red-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition"
+            >
+              <Phone className="w-3.5 h-3.5 text-red-600" />
+              <span>Contact Patient Family ({activeEmergency.request.phone})</span>
+            </a>
+            <span className="text-[11px] text-red-200">
+              Destination: {activeEmergency.hospital.name} (Trauma Alert Sent)
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* METRICS SUMMARY */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
