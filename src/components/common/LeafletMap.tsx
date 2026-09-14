@@ -106,6 +106,15 @@ export const LeafletMap: React.FC<LeafletMapProps> = ({
       }
 
       mapInstanceRef.current = map;
+
+      // Ensure mobile and modal sizing updates properly without grey tile gaps
+      setTimeout(() => {
+        try {
+          map.invalidateSize();
+        } catch (e) {
+          // ignore
+        }
+      }, 250);
     }
 
     return () => {

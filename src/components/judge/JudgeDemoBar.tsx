@@ -40,7 +40,9 @@ export const JudgeDemoBar: React.FC<JudgeDemoBarProps> = ({
   const { switchRole, role } = useAuth();
   const { language, setLanguage } = useLanguage();
   const { isOnline, toggleNetworkSimulation } = useNetwork();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(() => {
+    return typeof window !== 'undefined' ? window.innerWidth >= 768 : true;
+  });
 
   const handleMultilingualCycle = () => {
     if (language === 'en') setLanguage('hi');
@@ -59,7 +61,7 @@ export const JudgeDemoBar: React.FC<JudgeDemoBarProps> = ({
   ];
 
   return (
-    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 max-w-5xl w-[96%] pointer-events-auto">
+    <div className="fixed bottom-16 md:bottom-3 left-1/2 -translate-x-1/2 z-40 max-w-5xl w-[96%] pointer-events-auto">
       <div className="bg-slate-900/95 backdrop-blur-md text-white rounded-2xl shadow-2xl border border-slate-700/80 p-2 sm:p-2.5 transition-all">
         {/* Top bar header */}
         <div className="flex items-center justify-between px-2 pb-1.5 border-b border-slate-800 text-[11px]">
