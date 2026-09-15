@@ -6,6 +6,14 @@
 
 ---
 
+### 🌐 Live Deployment & Links
+
+- **GitHub Repository**: [https://github.com/margamgopichand1/ruralcare-connect](https://github.com/margamgopichand1/ruralcare-connect)
+- **Live Public Application (Global CDN)**: [https://ruralcare-connect-sih.surge.sh](https://ruralcare-connect-sih.surge.sh)
+- **Vercel Public Application**: [https://temporary-snappy-piano-tf4z78j.vercel.app](https://temporary-snappy-piano-tf4z78j.vercel.app)
+
+---
+
 ## 📌 Executive Summary & Vision
 
 Rural and underserved communities face acute challenges: long travel distances to hospitals, critical shortages of specialists, irregular diagnostic coverage, fragmented paper medical records, delayed referrals, medicine stock-outs, long waiting times, limited service awareness, poor connectivity, and language barriers.
